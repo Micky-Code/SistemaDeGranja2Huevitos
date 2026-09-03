@@ -1,21 +1,21 @@
 package modelo.galpon;
 
-
 import modelo.paquete.Paquete;
-import java.util.*;
-
-	
-
-
+import modelo.lote.LoteAves; // 1. Importamos el paquete del lote
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class Galpon {
     private final Long id;
     private final String codigo;
     private final SeccionGalpon seccion;
-    private final List<Paquete> paquetes; // Lista interna encapsulada
+    private final List<Paquete> paquetes; 
+    
+    // El lote de aves actual que habita este galpón (puede cambiar cuando finalice un ciclo)
+    private LoteAves loteActual; 
 
     public Galpon(Long id, String codigo, SeccionGalpon seccion) {
-        // 1. Blindaje / Validaciones (Fail-Fast)
         if (codigo == null || codigo.trim().isEmpty()) {
             throw new IllegalArgumentException("El código del galpón no puede estar vacío.");
         }
@@ -23,41 +23,40 @@ public class Galpon {
             throw new IllegalArgumentException("La sección del galpón es obligatoria.");
         }
 
-        // 2. Asignación inmutable
         this.id = id;
         this.codigo = codigo;
         this.seccion = seccion;
-        this.paquetes = new ArrayList<>(); // Nace con su contenedor de producción vacío
+        this.paquetes = new ArrayList<>();
+        this.loteActual = null; // Al nacer el galpón, puede estar vacío (en periodo de descanso)
     }
 
-    // 3. Comportamiento de Negocio (El objeto controla cómo se modifica su estado)
+    // Comportamiento de Negocio: Asignar un lote de aves al galpón
+    public void asignarLote(LoteAves nuevoLote) {
+        if (nuevoLote == null) {
+            throw new IllegalArgumentException("El lote a asignar no puede ser nulo.");
+        }
+        this.loteActual = nuevoLote;
+    }
+
+    // Comportamiento de Negocio: Registrar paquete de producción
     public void registrarPaquete(Paquete paquete) {
         if (paquete == null) {
             throw new IllegalArgumentException("El paquete a registrar no puede ser nulo.");
         }
+        // Regla de negocio opcional: ¿Podemos registrar huevos si el galpón no tiene un lote activo?
+        if (this.loteActual == null) {
+            throw new IllegalStateException("No se pueden registrar paquetes en un galpón que no tiene un lote de aves activo.");
+        }
         this.paquetes.add(paquete);
     }
 
-    // 4. Getters de Lectura (Sin Setters)
-    public Long getId() {
-        return id;
-    }
-
-    public String getCodigo() {
-        return codigo;
-    }
-
-    public SeccionGalpon getSeccion() {
-        return seccion;
-    }
-
-    /**
-     * Devuelve una vista de solo lectura de los paquetes. 
-     * Esto evita que clases externas modifiquen la lista haciendo .add() o .remove() 
-     * por fuera del método de negocio registrarPaquete().
-     */
+    // Getters
+    public Long getId() { return id; }
+    public String getCodigo() { return codigo; }
+    public SeccionGalpon getSeccion() { return seccion; }
+    public LoteAves getLoteActual() { return loteActual; }
+    
     public List<Paquete> getPaquetes() {
         return Collections.unmodifiableList(paquetes);
     }
 }
-
