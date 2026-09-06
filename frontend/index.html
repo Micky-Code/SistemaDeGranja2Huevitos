@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avícola UPN - Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Sistema de Control Avícola UPN</h1>
+        <nav>
+            <a href="index.html" class="active">Dashboard</a>
+            <a href="produccion.html">Producción</a>
+            <a href="almacen.html">Almacén</a>
+            <a href="sanidad.html">Sanidad</a>
+        </nav>
+    </header>
+
+    <main class="container">
+        <h2>Resumen General del Galpón</h2>
+        <section class="kpi-grid">
+            <div class="card">
+                <h3>Aves Vivas</h3>
+                <p class="kpi-value" id="total-aves">12,450</p>
+                <small>Viabilidad: 98.2%</small>
+            </div>
+            <div class="card">
+                <h3>Producción del Día</h3>
+                <p class="kpi-value" id="total-huevos">11,200</p>
+                <small>Huevos totales recolectados</small>
+            </div>
+            <div class="card">
+                <h3>% Postura (Hen-Day)</h3>
+                <p class="kpi-value" id="porcentaje-postura">89.9%</p>
+                <small>Rendimiento óptimo</small>
+            </div>
+            <div class="card">
+                <h3>Consumo Alimento</h3>
+                <p class="kpi-value" id="consumo-alimento">1,350 kg</p>
+                <small>108.4 g/ave/día</small>
+            </div>
+        </section>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>
