@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avícola UPN - Sanidad</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Sistema de Control Avícola UPN</h1>
+        <nav>
+            <a href="index.html">Dashboard</a>
+            <a href="produccion.html">Producción</a>
+            <a href="almacen.html">Almacén</a>
+            <a href="sanidad.html" class="active">Sanidad</a>
+        </nav>
+    </header>
+
+    <main class="container">
+        <h2>Plan Sanitario y Vacunación</h2>
+        <form class="card-form">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="vacuna">Vacuna / Insumo Sanitario:</label>
+                    <select id="vacuna">
+                        <option>Newcastle + Gumboro</option>
+                        <option>Bronquitis Infecciosa</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="lote-vacuna">N° Lote de Vacuna:</label>
+                    <input type="text" id="lote-vacuna" placeholder="Ej: VAC-2026-X">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="via-aplicacion">Vía de Aplicación:</label>
+                    <select id="via-aplicacion">
+                        <option>Agua de bebida</option>
+                        <option>Ocular / Nasal</option>
+                        <option>Inyección Intramuscular</option>
+                        <option>Aspersión / Spray</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="fecha-aplicacion">Fecha de Aplicación:</label>
+                    <input type="date" id="fecha-aplicacion">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="galpon-sanidad">Galpón Destino:</label>
+                <select id="galpon-sanidad">
+                    <option>Galpón 01</option>
+                    <option>Galpón 02</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="obs">Observaciones Médicas:</label>
+                <textarea id="obs" rows="3"></textarea>
+            </div>
+
+            <button type="submit" class="btn">Registrar Vacunación</button>
+        </form>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>
