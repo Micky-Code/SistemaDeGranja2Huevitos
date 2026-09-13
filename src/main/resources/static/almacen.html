@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Avícola UPN - Almacén</title>
+    <title>Almacén - Sistema Avícola</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -18,37 +18,43 @@
     </header>
 
     <main class="container">
-        <h2>Recepción de Producción en Almacén</h2>
-        <form class="card-form">
-            <div class="form-group">
-                <label for="lote-recepcion">Lote / Envío de Galpón:</label>
-                <select id="lote-recepcion">
-                    <option>ENV-20260905 - Galpón 01 (11,200 huevos)</option>
-                </select>
-            </div>
-            
-            <h3>Control de Transporte y Mermas</h3>
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="huevos-recibidos">Huevos Recibidos en Buen Estado:</label>
-                    <input type="number" id="huevos-recibidos" min="0">
-                </div>
-                <div class="form-group">
-                    <label for="mermas-traslado">Huevos Rotos en Traslado:</label>
-                    <input type="number" id="mermas-traslado" min="0" value="0">
-                </div>
-            </div>
+        <h2>Módulo de Recepción e Inventario de Almacén</h2>
+
+        <!-- Formulario para recepcionar la producción enviada desde Galpón -->
+        <form id="form-almacen" class="card">
+            <h3>Recepción de Carga desde Galpón</h3>
 
             <div class="form-group">
-                <label for="estado-recepcion">Estado del Lote Recibido:</label>
-                <select id="estado-recepcion">
-                    <option value="conforme">Conforme (Sin novedades)</option>
-                    <option value="con_mermas">Con Mermas / Rotos en Traslado</option>
-                    <option value="observado">Observado / Rechazado</option>
+                <label for="select-produccion">Lote de Producción Pendiente:</label>
+                <select id="select-produccion" required>
+                    <option value="">Seleccione una recepción pendiente...</option>
+                    <option value="101">Prod #101 - Galpón 1 (Envío: 1200 huevos)</option>
+                    <option value="102">Prod #102 - Galpón 2 (Envío: 850 huevos)</option>
                 </select>
             </div>
 
-            <button type="submit" class="btn">Confirmar Recepción</button>
+            <div class="form-group">
+                <label for="input-fecha-recepcion">Fecha de Recepción:</label>
+                <input type="date" id="input-fecha-recepcion" required>
+            </div>
+
+            <div class="grid-clasificacion">
+                <div class="form-control">
+                    <label for="cant-recibida">Total Recibido (Unidades):</label>
+                    <input type="number" id="cant-recibida" min="0" value="0" required>
+                </div>
+                <div class="form-control">
+                    <label for="cant-rota-traslado">Rotos en Traslado (Merma):</label>
+                    <input type="number" id="cant-rota-traslado" min="0" value="0" required>
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-top: 1rem;">
+                <label for="input-observaciones">Observaciones:</label>
+                <textarea id="input-observaciones" rows="3" placeholder="Detalles del traslado o estado de la bandeja..."></textarea>
+            </div>
+
+            <button type="submit" class="btn-primary">Confirmar Recepción en Almacén</button>
         </form>
     </main>
 

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Avícola UPN - Producción</title>
+    <title>Producción - Sistema Avícola</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -18,53 +18,58 @@
     </header>
 
     <main class="container">
-        <h2>Registro de Producción Diaria</h2>
-        <form class="card-form">
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="fecha">Fecha:</label>
-                    <input type="date" id="fecha" name="fecha" required>
-                </div>
-                <div class="form-group">
-                    <label for="galpon">Galpón:</label>
-                    <select id="galpon" name="galpon" required>
-                        <option value="1">Galpón 01</option>
-                        <option value="2">Galpón 02</option>
-                    </select>
-                </div>
-            </div>
+        <h2>Módulo de Producción en Galpón</h2>
+        
+        <form id="form-produccion" class="card">
+            <h3>Registro de Recolección Diaria</h3>
             
-            <h3>Mortalidad y Alimento</h3>
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="mortalidad">Aves Muertas / Descarte:</label>
-                    <input type="number" id="mortalidad" name="mortalidad" min="0" value="0">
+            <div class="form-group">
+                <label for="select-grupo">Grupo de Aves / Galpón:</label>
+                <select id="select-grupo" required>
+                    <option value="">Seleccione un grupo...</option>
+                    <option value="1">Galpón 1 - Camada A (Lote 2026)</option>
+                    <option value="2">Galpón 2 - Camada B (Lote 2026)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="input-fecha">Fecha de Recolección:</label>
+                <input type="date" id="input-fecha" required>
+            </div>
+
+            <h4>Desglose por Clasificación (Unidades)</h4>
+            <div class="grid-clasificacion">
+                <div class="form-control">
+                    <label for="cant-rojo">1. Rojo:</label>
+                    <input type="number" id="cant-rojo" min="0" value="0" class="cant-huevo">
                 </div>
-                <div class="form-group">
-                    <label for="tipo-alimento">Tipo de Alimento:</label>
-                    <select id="tipo-alimento" name="tipo_alimento">
-                        <option value="postura_1">Postura FASE 1</option>
-                        <option value="postura_2">Postura FASE 2</option>
-                        <option value="crecimiento">Crecimiento</option>
-                    </select>
+                <div class="form-control">
+                    <label for="cant-pardo">2. Pardo:</label>
+                    <input type="number" id="cant-pardo" min="0" value="0" class="cant-huevo">
                 </div>
-                <div class="form-group">
-                    <label for="alimento">Alimento (Kg):</label>
-                    <input type="number" id="alimento" name="alimento" step="0.1" min="0">
+                <div class="form-control">
+                    <label for="cant-jumbo">3. Jumbo:</label>
+                    <input type="number" id="cant-jumbo" min="0" value="0" class="cant-huevo">
+                </div>
+                <div class="form-control">
+                    <label for="cant-dobleyema">4. Doble Yema:</label>
+                    <input type="number" id="cant-dobleyema" min="0" value="0" class="cant-huevo">
+                </div>
+                <div class="form-control">
+                    <label for="cant-poroso">5. Poroso:</label>
+                    <input type="number" id="cant-poroso" min="0" value="0" class="cant-huevo">
+                </div>
+                <div class="form-control">
+                    <label for="cant-roto">6. Roto (en Galpón):</label>
+                    <input type="number" id="cant-roto" min="0" value="0" class="cant-huevo">
                 </div>
             </div>
 
-            <h3>Clasificación de Huevo (Unidades)</h3>
-            <div class="grid-inputs">
-                <div class="form-group"><label>Rojo:</label><input type="number" min="0" value="0"></div>
-                <div class="form-group"><label>Pardo:</label><input type="number" min="0" value="0"></div>
-                <div class="form-group"><label>Jumbo:</label><input type="number" min="0" value="0"></div>
-                <div class="form-group"><label>Doble Yema:</label><input type="number" min="0" value="0"></div>
-                <div class="form-group"><label>Poroso:</label><input type="number" min="0" value="0"></div>
-                <div class="form-group"><label>Roto/Mermado:</label><input type="number" min="0" value="0"></div>
+            <div class="total-box">
+                <p><strong>Total Recolectado:</strong> <span id="total-calculado">0</span> huevos</p>
             </div>
 
-            <button type="submit" class="btn">Guardar Registro</button>
+            <button type="submit" class="btn-primary">Guardar Registro de Producción</button>
         </form>
     </main>
 

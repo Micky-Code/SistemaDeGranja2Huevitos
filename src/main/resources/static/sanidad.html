@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Avícola UPN - Sanidad</title>
+    <title>Sanidad y Mortalidad - Sistema Avícola</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -18,52 +18,63 @@
     </header>
 
     <main class="container">
-        <h2>Plan Sanitario y Vacunación</h2>
-        <form class="card-form">
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="vacuna">Vacuna / Insumo Sanitario:</label>
-                    <select id="vacuna">
-                        <option>Newcastle + Gumboro</option>
-                        <option>Bronquitis Infecciosa</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="lote-vacuna">N° Lote de Vacuna:</label>
-                    <input type="text" id="lote-vacuna" placeholder="Ej: VAC-2026-X">
-                </div>
-            </div>
+        <h2>Módulo de Sanidad y Control de Mortalidad</h2>
 
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="via-aplicacion">Vía de Aplicación:</label>
-                    <select id="via-aplicacion">
-                        <option>Agua de bebida</option>
-                        <option>Ocular / Nasal</option>
-                        <option>Inyección Intramuscular</option>
-                        <option>Aspersión / Spray</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="fecha-aplicacion">Fecha de Aplicación:</label>
-                    <input type="date" id="fecha-aplicacion">
-                </div>
-            </div>
+        <!-- Formulario 1: Registro de Mortalidad -->
+        <form id="form-mortalidad" class="card">
+            <h3>Registro de Bajas / Mortalidad</h3>
 
             <div class="form-group">
-                <label for="galpon-sanidad">Galpón Destino:</label>
-                <select id="galpon-sanidad">
-                    <option>Galpón 01</option>
-                    <option>Galpón 02</option>
+                <label for="select-grupo-mortalidad">Grupo de Aves / Galpón:</label>
+                <select id="select-grupo-mortalidad" required>
+                    <option value="">Seleccione un grupo...</option>
+                    <option value="1">Galpón 1 - Camada A (Lote 2026)</option>
+                    <option value="2">Galpón 2 - Camada B (Lote 2026)</option>
                 </select>
             </div>
 
             <div class="form-group">
-                <label for="obs">Observaciones Médicas:</label>
-                <textarea id="obs" rows="3"></textarea>
+                <label for="input-fecha-mortalidad">Fecha del Evento:</label>
+                <input type="date" id="input-fecha-mortalidad" required>
             </div>
 
-            <button type="submit" class="btn">Registrar Vacunación</button>
+            <div class="form-group">
+                <label for="cant-mortalidad">Cantidad de Aves Bajas:</label>
+                <input type="number" id="cant-mortalidad" min="1" value="1" required>
+            </div>
+
+            <div class="form-group">
+                <label for="input-causa-mortalidad">Causa / Observaciones:</label>
+                <textarea id="input-causa-mortalidad" rows="2" placeholder="Causa probable o hallazgos clínicos..." required></textarea>
+            </div>
+
+            <button type="submit" class="btn-primary">Registrar Baja de Aves</button>
+        </form>
+
+        <!-- Formulario 2: Aplicación Sanitaria (Solo Rol Veterinario/Jefe) -->
+        <form id="form-vacunacion" class="card solo-veterinario" style="margin-top: 2rem;">
+            <h3>Registro de Aplicación Sanitaria / Vacunas</h3>
+
+            <div class="form-group">
+                <label for="select-grupo-sanidad">Grupo de Aves / Galpón:</label>
+                <select id="select-grupo-sanidad" required>
+                    <option value="">Seleccione un grupo...</option>
+                    <option value="1">Galpón 1 - Camada A (Lote 2026)</option>
+                    <option value="2">Galpón 2 - Camada B (Lote 2026)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="input-producto-sanitario">Vacuna / Tratamiento:</label>
+                <input type="text" id="input-producto-sanitario" placeholder="Ej: New Castle - Dosis 1" required>
+            </div>
+
+            <div class="form-group">
+                <label for="input-fecha-aplicacion">Fecha de Aplicación:</label>
+                <input type="date" id="input-fecha-aplicacion" required>
+            </div>
+
+            <button type="submit" class="btn-primary">Registrar Plan Sanitario</button>
         </form>
     </main>
 
