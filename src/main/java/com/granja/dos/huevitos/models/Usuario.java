@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
  * @author WChui
  */
 @Entity
-@Table(name = "usuarios")
+@Table(name = "usuario")
 @Data
 @NoArgsConstructor
 public class Usuario {
@@ -31,7 +31,7 @@ public class Usuario {
     private Integer idUsuario;
 
     @Column(name = "usuario", length = 50, nullable = false, unique = true)
-    private String usuario;
+    private String username;
 
     @Column(name = "password", length = 255, nullable = false)
     private String password;
