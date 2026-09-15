@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Sistema Avícola</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Sistema de Control Avícola UPN</h1>
+        <nav>
+            <a href="index.html" class="active">Dashboard</a>
+            <a href="produccion.html">Producción</a>
+            <a href="almacen.html">Almacén</a>
+            <a href="sanidad.html">Sanidad</a>
+        </nav>
+    </header>
+
+    <main class="container">
+        <h2>Panel de Control General</h2>
+
+        <!-- Tarjetas Informativas / KPIs -->
+        <div class="grid-clasificacion" style="margin-bottom: 2rem;">
+            <div class="card" style="text-align: center;">
+                <h3>Producción Hoy</h3>
+                <p style="font-size: 2rem; font-weight: bold; color: #27ae60;" id="kpi-produccion">2,050</p>
+                <small>huevos recolectados</small>
+            </div>
+            <div class="card" style="text-align: center;">
+                <h3>Stock en Almacén</h3>
+                <p style="font-size: 2rem; font-weight: bold; color: #2980b9;" id="kpi-almacen">1,980</p>
+                <small>huevos listos para despacho</small>
+            </div>
+            <div class="card" style="text-align: center;">
+                <h3>Viabilidad Promedio</h3>
+                <p style="font-size: 2rem; font-weight: bold; color: #f39c12;" id="kpi-viabilidad">96.5%</p>
+                <small>aves activas en galpones</small>
+            </div>
+        </div>
+
+        <!-- Sección de Resumen de Galpones -->
+        <section class="card">
+            <h3>Estado de Galpones (Vista DB: v_grupo_resumen)</h3>
+            <table style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+                <thead>
+                    <tr style="background-color: #f2f2f2; text-align: left;">
+                        <th style="padding: 8px;">Grupo / Galpón</th>
+                        <th style="padding: 8px;">Aves Iniciales</th>
+                        <th style="padding: 8px;">Aves Actuales</th>
+                        <th style="padding: 8px;">% Viabilidad</th>
+                        <th style="padding: 8px;">Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="padding: 8px;">Galpón 1 - Camada A</td>
+                        <td style="padding: 8px;">5,000</td>
+                        <td style="padding: 8px;">4,850</td>
+                        <td style="padding: 8px;">97.0%</td>
+                        <td style="padding: 8px;"><span style="color: green; font-weight: bold;">Activo</span></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px;">Galpón 2 - Camada B</td>
+                        <td style="padding: 8px;">4,500</td>
+                        <td style="padding: 8px;">4,320</td>
+                        <td style="padding: 8px;">96.0%</td>
+                        <td style="padding: 8px;"><span style="color: green; font-weight: bold;">Activo</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>

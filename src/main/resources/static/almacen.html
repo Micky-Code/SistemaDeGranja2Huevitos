@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Almacén - Sistema Avícola</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Sistema de Control Avícola UPN</h1>
+        <nav>
+            <a href="index.html">Dashboard</a>
+            <a href="produccion.html">Producción</a>
+            <a href="almacen.html" class="active">Almacén</a>
+            <a href="sanidad.html">Sanidad</a>
+        </nav>
+    </header>
+
+    <main class="container">
+        <h2>Módulo de Recepción e Inventario de Almacén</h2>
+
+        <!-- Formulario para recepcionar la producción enviada desde Galpón -->
+        <form id="form-almacen" class="card">
+            <h3>Recepción de Carga desde Galpón</h3>
+
+            <div class="form-group">
+                <label for="select-produccion">Lote de Producción Pendiente:</label>
+                <select id="select-produccion" required>
+                    <option value="">Seleccione una recepción pendiente...</option>
+                    <option value="101">Prod #101 - Galpón 1 (Envío: 1200 huevos)</option>
+                    <option value="102">Prod #102 - Galpón 2 (Envío: 850 huevos)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="input-fecha-recepcion">Fecha de Recepción:</label>
+                <input type="date" id="input-fecha-recepcion" required>
+            </div>
+
+            <div class="grid-clasificacion">
+                <div class="form-control">
+                    <label for="cant-recibida">Total Recibido (Unidades):</label>
+                    <input type="number" id="cant-recibida" min="0" value="0" required>
+                </div>
+                <div class="form-control">
+                    <label for="cant-rota-traslado">Rotos en Traslado (Merma):</label>
+                    <input type="number" id="cant-rota-traslado" min="0" value="0" required>
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-top: 1rem;">
+                <label for="input-observaciones">Observaciones:</label>
+                <textarea id="input-observaciones" rows="3" placeholder="Detalles del traslado o estado de la bandeja..."></textarea>
+            </div>
+
+            <button type="submit" class="btn-primary">Confirmar Recepción en Almacén</button>
+        </form>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>
