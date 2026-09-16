@@ -8,6 +8,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.granja.dos.huevitos.repository.UsuarioRepository;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 public class UsuarioDetailsService implements UserDetailsService {
     private final UsuarioRepository usuarios;
@@ -19,12 +22,14 @@ public class UsuarioDetailsService implements UserDetailsService {
     @Override
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) {
-        var usuario = usuarios.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Credenciales inválidas."));
+    	var usuario = usuarios.findByUsername(username)
+                .orElseThrow(() ->
+                        new UsernameNotFoundException("Credenciales inválidas."));
+
         return User.withUsername(usuario.getUsername())
                 .password(usuario.getPassword())
                 .authorities("ROLE_" + usuario.getRol().getNombre())
                 .disabled(!Boolean.TRUE.equals(usuario.getEstado()))
-                .build();
+                .build();        
     }
 }

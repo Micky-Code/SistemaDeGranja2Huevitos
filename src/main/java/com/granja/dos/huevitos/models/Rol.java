@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
  * @author WChui
  */
 @Entity
-@Table(name = "rol")
+@Table(name = "rol", schema = "Avicola")
 @Data
 @NoArgsConstructor
 public class Rol {
