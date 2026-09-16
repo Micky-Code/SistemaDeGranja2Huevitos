@@ -76,6 +76,7 @@ public class SecurityConfig {
                 .formLogin(config -> config.disable())
                 .httpBasic(config -> config.disable())
                 .authorizeHttpRequests(config -> config
+                        .requestMatchers(HttpMethod.GET, "/", "/login", "/css/**", "/js/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/auth/csrf").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
                         .anyRequest().authenticated())
