@@ -7,19 +7,35 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class PageController {
-    @GetMapping("/")
-    public String home() {
-        return "redirect:/login";
+
+    private void agregarUsuarioAlModelo(Model model, Principal principal) {
+        if (principal != null) {
+            model.addAttribute("username", principal.getName());
+        } else {
+            model.addAttribute("username", "Invitado");
+        }
     }
 
-    @GetMapping("/login")
+    @GetMapping({"/", "/login"})
     public String login() {
         return "login";
     }
 
     @GetMapping("/menu")
-    public String menu(Authentication authentication, Model model) {
-        model.addAttribute("username", authentication.getName());
+    public String menu(Model model, Principal principal) {
+        agregarUsuarioAlModelo(model, principal);
         return "menu";
+    }
+
+    @GetMapping("/infraestructura")
+    public String infraestructura(Model model, Principal principal) {
+        agregarUsuarioAlModelo(model, principal);
+        return "infraestructura";
+    }
+
+    @GetMapping("/produccion")
+    public String produccion(Model model, Principal principal) {
+        agregarUsuarioAlModelo(model, principal);
+        return "produccion";
     }
 }

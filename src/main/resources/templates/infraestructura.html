@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infraestructura - La Granja 2 Huevitos</title>
+    
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/app.css}" href="/css/app.css">
+</head>
+<body class="bg-light">
+
+    <nav class="navbar navbar-expand-lg bg-white border-bottom px-4 py-3 mb-4">
+        <div class="container-fluid">
+            <span class="navbar-brand fw-bold text-success fs-4">🥚 La Granja 2 Huevitos</span>
+            <div class="d-flex align-items-center gap-3">
+                <span class="text-muted small">Usuario: <strong th:text="${username}">Usuario</strong></span>
+                <a th:href="@{/menu}" class="btn btn-outline-success btn-sm">Menú Principal</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container my-4">
+        <h3 class="fw-bold text-success mb-4">🏡 Módulo 3: Infraestructura</h3>
+
+        <div class="row g-4">
+            <!-- 1. Sector -->
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm rounded-4 p-4 bg-white h-100">
+                    <h5 class="fw-bold mb-3 text-secondary">Gestión de Sectores</h5>
+                    <form id="form-sector" class="mb-4">
+                        <div class="mb-3">
+                            <label for="sec-nombre" class="form-label">Nombre del Sector</label>
+                            <input type="text" id="sec-nombre" class="form-control" placeholder="Ej: Sector Norte" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="sec-descripcion" class="form-label">Descripción</label>
+                            <input type="text" id="sec-descripcion" class="form-control" placeholder="Ej: Zona de postura activa">
+                        </div>
+                        <button type="submit" class="btn btn-success w-100 fw-semibold">Guardar Sector</button>
+                    </form>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr><th>ID</th><th>Nombre</th><th>Descripción</th></tr>
+                            </thead>
+                            <tbody id="tb-sectores"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Galpon -->
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm rounded-4 p-4 bg-white h-100">
+                    <h5 class="fw-bold mb-3 text-secondary">Gestión de Galpones</h5>
+                    <form id="form-galpon" class="mb-4">
+                        <div class="mb-3">
+                            <label for="gal-nombre" class="form-label">Nombre del Galpón</label>
+                            <input type="text" id="gal-nombre" class="form-control" placeholder="Ej: Galpón G-01" required>
+                        </div>
+                        <div class="row g-2 mb-3">
+                            <div class="col-md-6">
+                                <label for="gal-capacidad" class="form-label">Capacidad (Aves)</label>
+                                <input type="number" id="gal-capacidad" class="form-control" min="1" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="gal-sector" class="form-label">Sector</label>
+                                <select id="gal-sector" class="form-select" required></select>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100 fw-semibold">Guardar Galpón</button>
+                    </form>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr><th>ID</th><th>Galpón</th><th>Capacidad</th><th>Estado</th></tr>
+                            </thead>
+                            <tbody id="tb-galpones"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. LoteAves -->
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm rounded-4 p-4 bg-white h-100">
+                    <h5 class="fw-bold mb-3 text-secondary">Lotes de Aves</h5>
+                    <form id="form-lote" class="mb-4">
+                        <div class="mb-3">
+                            <label for="lote-nombre" class="form-label">Nombre del Lote</label>
+                            <input type="text" id="lote-nombre" class="form-control" placeholder="Ej: Lote Cobb-2026" required>
+                        </div>
+                        <div class="row g-2 mb-3">
+                            <div class="col-md-6">
+                                <label for="lote-cant-inicial" class="form-label">Cantidad Inicial</label>
+                                <input type="number" id="lote-cant-inicial" class="form-control" min="1" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="lote-fecha-ingreso" class="form-label">Fecha Ingreso</label>
+                                <input type="date" id="lote-fecha-ingreso" class="form-control" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100 fw-semibold">Guardar Lote</button>
+                    </form>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr><th>ID</th><th>Nombre</th><th>Inicial</th><th>Actual</th><th>Fecha</th></tr>
+                            </thead>
+                            <tbody id="tb-lotes"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. LoteGalpon (Asignación) -->
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm rounded-4 p-4 bg-white h-100">
+                    <h5 class="fw-bold mb-3 text-secondary">Distribución Aves en Galpón (LoteGalpon)</h5>
+                    <form id="form-lote-galpon">
+                        <div class="row g-2 mb-3">
+                            <div class="col-md-6">
+                                <label for="lg-lote" class="form-label">Lote Origen</label>
+                                <select id="lg-lote" class="form-select" required></select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="lg-galpon" class="form-label">Galpón Destino</label>
+                                <select id="lg-galpon" class="form-select" required></select>
+                            </div>
+                        </div>
+                        <div class="row g-2 mb-3">
+                            <div class="col-md-6">
+                                <label for="lg-cantidad" class="form-label">Cantidad Aves</label>
+                                <input type="number" id="lg-cantidad" class="form-control" min="1" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="lg-fecha" class="form-label">Fecha Asignación</label>
+                                <input type="date" id="lg-fecha" class="form-control" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100 fw-semibold py-2">Asignar Aves a Galpón</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/infraestructura.js}" src="/js/infraestructura.js"></script>
+</body>
+</html>
