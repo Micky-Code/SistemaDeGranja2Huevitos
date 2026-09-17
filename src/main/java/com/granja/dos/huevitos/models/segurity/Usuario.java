@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.granja.dos.huevitos.models;
+package com.granja.dos.huevitos.models.segurity;
 
 import java.time.LocalDateTime;
 

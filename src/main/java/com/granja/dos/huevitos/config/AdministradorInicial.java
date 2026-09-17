@@ -9,8 +9,9 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import com.granja.dos.huevitos.models.Rol;
-import com.granja.dos.huevitos.models.Usuario;
+
+import com.granja.dos.huevitos.models.segurity.Rol;
+import com.granja.dos.huevitos.models.segurity.Usuario;
 import com.granja.dos.huevitos.repository.RolRepository;
 import com.granja.dos.huevitos.repository.UsuarioRepository;
 
