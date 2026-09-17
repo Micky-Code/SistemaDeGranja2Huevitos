@@ -1,0 +1,19 @@
+:root { --granja-green: #247a49; --granja-dark: #173d2a; --granja-surface: #f5f8f3; }
+body { color: #26342b; }
+.login-page { background: #eef3eb; }
+.menu-page { background: var(--granja-surface); min-height: 100vh; }
+.login-shell { max-width: 1040px; min-height: 590px; border-radius: 24px; }
+.brand-panel { background: linear-gradient(150deg, #17553a 0%, #268650 60%, #67a664 100%); }
+.brand-mark { color: var(--granja-dark); font-size: 1.1rem; font-weight: 800; letter-spacing: -.025em; }
+.brand-panel .brand-mark { color: white; }
+.brand-mark span { color: #e6ba5a; margin-right: .35rem; font-size: 1.3rem; }
+.brand-copy { max-width: 25rem; color: #e5f4e9; font-size: 1.1rem; }
+.brand-footer { color: #ddf0df; }
+.letter-spacing { letter-spacing: .14em; }
+.form-wrap { max-width: 360px; }
+.eyebrow { color: var(--granja-green); text-transform: uppercase; font-size: .75rem; font-weight: 800; letter-spacing: .15em; }
+.form-control:focus { border-color: #6aaa78; box-shadow: 0 0 0 .25rem rgba(36, 122, 73, .14); }
+.btn-success { --bs-btn-bg: var(--granja-green); --bs-btn-border-color: var(--granja-green); --bs-btn-hover-bg: #1c613a; --bs-btn-hover-border-color: #1c613a; }
+.menu-card { background: white; border: 1px solid #e1e9df; border-radius: 18px; box-shadow: 0 10px 24px rgba(23, 61, 42, .04); }
+.module-icon { display: grid; place-items: center; width: 58px; height: 58px; background: #e9f4e8; border-radius: 15px; font-size: 1.7rem; }
+@media (max-width: 991.98px) { .brand-panel { min-height: 270px; gap: 1rem; } .brand-footer { display: none; } }
