@@ -19,33 +19,33 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity
-@Table(name = "galpon") // 
-@Getter @Setter // 
-@NoArgsConstructor
-public class Galpon {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_galpon")
-    private Integer idGalpon;
-
-    @Column(name = "nombre", length = 50, nullable = false, unique = true)
-    private String nombre;
-
-    
-    @Enumerated(EnumType.STRING)
-    @Column(name = "seccion", nullable = false)
-    private SeccionGalpon seccion;
-
-    @Column(name = "estado", nullable = false)
-    private Boolean estado = true;
-
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_lote_actual")
-    private LoteAves loteActual;
-    
-    @Column(name = "creat", nullable = false, updatable = false)
-    private LocalDateTime creat = LocalDateTime.now();
-}
+//@Entity
+//@Table(name = "galpon") // 
+//@Getter @Setter // 
+//@NoArgsConstructor
+//public class Galpon {
+//
+//    @Id
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    @Column(name = "id_galpon")
+//    private Integer idGalpon;
+//
+//    @Column(name = "nombre", length = 50, nullable = false, unique = true)
+//    private String nombre;
+//
+//    
+//    @Enumerated(EnumType.STRING)
+//    @Column(name = "seccion", nullable = false)
+//    private SeccionGalpon seccion;
+//
+//    @Column(name = "estado", nullable = false)
+//    private Boolean estado = true;
+//
+//    
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "id_lote_actual")
+//    private LoteAves loteActual;
+//    
+//    @Column(name = "creat", nullable = false, updatable = false)
+//    private LocalDateTime creat = LocalDateTime.now();
+//}
