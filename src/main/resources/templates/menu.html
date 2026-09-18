@@ -31,16 +31,16 @@
             <p class="text-secondary mb-3">Consulta y registro de la producción diaria.</p>
             <span class="badge text-bg-light border">Próximamente</span>
         </article></div>
-        <div class="col-sm-6 col-lg-4"><article class="menu-card h-100 p-4">
-            <div class="module-icon" aria-hidden="true">📦</div><h2 class="h5 fw-bold mt-4">Inventario</h2>
-            <p class="text-secondary mb-3">Control de existencias y suministros.</p>
-            <span class="badge text-bg-light border">Próximamente</span>
-        </article></div>
-        <div class="col-sm-6 col-lg-4"><article class="menu-card h-100 p-4">
-            <div class="module-icon" aria-hidden="true">📊</div><h2 class="h5 fw-bold mt-4">Reportes</h2>
-            <p class="text-secondary mb-3">Resumen de la actividad de la granja.</p>
-            <span class="badge text-bg-light border">Próximamente</span>
-        </article></div>
+        <div class="col-sm-6 col-lg-4"><a class="text-decoration-none" th:href="@{/almacen}"><article class="menu-card h-100 p-4">
+            <div class="module-icon" aria-hidden="true">📦</div><h2 class="h5 fw-bold mt-4 text-dark">Almacén</h2>
+            <p class="text-secondary mb-3">Reconteo y clasificación final de huevos recibidos desde los galpones.</p>
+            <span class="badge text-bg-success-subtle text-success-emphasis border">Disponible</span>
+        </article></a></div>
+        <div class="col-sm-6 col-lg-4"><a class="text-decoration-none" th:href="@{/reportes}"><article class="menu-card h-100 p-4">
+            <div class="module-icon" aria-hidden="true">📊</div><h2 class="h5 fw-bold mt-4 text-dark">Reportes</h2>
+            <p class="text-secondary mb-3">Genera y consulta los reportes del sistema.</p>
+            <span class="badge text-bg-success-subtle text-success-emphasis border">Disponible</span>
+        </article></a></div>
     </div>
 </main>
 </body>
