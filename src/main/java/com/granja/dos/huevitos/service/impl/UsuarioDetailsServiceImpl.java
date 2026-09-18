@@ -1,4 +1,4 @@
-package com.granja.dos.huevitos.service;
+package com.granja.dos.huevitos.service.impl;
 
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,10 +12,10 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
-public class UsuarioDetailsService implements UserDetailsService {
+public class UsuarioDetailsServiceImpl implements UserDetailsService {
     private final UsuarioRepository usuarios;
 
-    public UsuarioDetailsService(UsuarioRepository usuarios) {
+    public UsuarioDetailsServiceImpl(UsuarioRepository usuarios) {
         this.usuarios = usuarios;
     }
 
@@ -28,7 +28,8 @@ public class UsuarioDetailsService implements UserDetailsService {
 
         return User.withUsername(usuario.getUsername())
                 .password(usuario.getPassword())
-                .authorities("ROLE_" + usuario.getRol().getNombre())
+                .authorities(usuario.getRol().getIdRol() != null && usuario.getRol().getIdRol() == 1
+                        && "ADMIN".equals(usuario.getRol().getNombre()) ? "ROLE_ADMIN" : "ROLE_USER")
                 .disabled(!Boolean.TRUE.equals(usuario.getEstado()))
                 .build();        
     }

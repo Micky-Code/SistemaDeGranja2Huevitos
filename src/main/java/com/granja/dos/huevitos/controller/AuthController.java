@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.granja.dos.huevitos.dto.LoginRequest;
 import com.granja.dos.huevitos.dto.UsuarioSesionResponse;
 import com.granja.dos.huevitos.service.AuthService;
+import com.granja.dos.huevitos.service.impl.AuthServiceImpl;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -26,7 +28,7 @@ public class AuthController {
     private final SecurityContextRepository contexts;
     private final SessionAuthenticationStrategy sessions;
 
-    public AuthController(AuthService authService, SecurityContextRepository contexts,
+    public AuthController(AuthServiceImpl authService, SecurityContextRepository contexts,
             SessionAuthenticationStrategy sessions) {
         this.authService = authService;
         this.contexts = contexts;

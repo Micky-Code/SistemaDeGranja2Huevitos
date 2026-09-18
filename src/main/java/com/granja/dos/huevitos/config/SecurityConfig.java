@@ -29,7 +29,8 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.granja.dos.huevitos.exception.ErrorResponse;
-import com.granja.dos.huevitos.service.UsuarioDetailsService;
+import com.granja.dos.huevitos.service.impl.UsuarioDetailsServiceImpl;
+
 import tools.jackson.databind.ObjectMapper;
 
 @Configuration
@@ -41,7 +42,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    AuthenticationManager authenticationManager(UsuarioDetailsService users, PasswordEncoder encoder) {
+    AuthenticationManager authenticationManager(UsuarioDetailsServiceImpl users, PasswordEncoder encoder) {
         var provider = new DaoAuthenticationProvider(users);
         provider.setPasswordEncoder(encoder);
         return new ProviderManager(provider);
@@ -79,6 +80,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/", "/login", "/css/**", "/js/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/auth/csrf").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
+                        .requestMatchers("/usuarios", "/api/usuarios", "/api/usuarios/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
                 .exceptionHandling(config -> config
                         .authenticationEntryPoint((request, response, ex) -> {

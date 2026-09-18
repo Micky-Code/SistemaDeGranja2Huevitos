@@ -22,10 +22,15 @@
     <div class="mb-5">
         <span class="eyebrow">Panel principal</span>
         <h1 class="display-6 fw-bold mt-2 mb-2">Menú de la granja</h1>
-        <p class="text-secondary mb-0">Selecciona un módulo para comenzar. Las opciones estarán disponibles próximamente.</p>
+        <p class="text-secondary mb-0">Selecciona un módulo para comenzar.</p>
     </div>
     <div id="logout-error" class="alert alert-danger d-none" role="alert" aria-live="polite"></div>
     <div class="row g-4">
+        <div class="col-sm-6 col-lg-4" th:if="${isAdmin}"><a class="menu-card h-100 p-4 d-block text-decoration-none text-body" th:href="@{/usuarios}">
+            <div class="module-icon" aria-hidden="true">👥</div><h2 class="h5 fw-bold mt-4">Usuarios</h2>
+            <p class="text-secondary mb-3">Crear y administrar cuentas de acceso.</p>
+            <span class="badge text-bg-success">Abrir módulo</span>
+        </a></div>
         <div class="col-sm-6 col-lg-4"><article class="menu-card h-100 p-4">
             <div class="module-icon" aria-hidden="true">🥚</div><h2 class="h5 fw-bold mt-4">Producción</h2>
             <p class="text-secondary mb-3">Consulta y registro de la producción diaria.</p>
