@@ -22,4 +22,16 @@ public class PageController {
         model.addAttribute("username", authentication.getName());
         return "menu";
     }
+
+    @GetMapping("/almacen")
+    public String almacen(Authentication authentication, Model model) {
+        model.addAttribute("username", authentication.getName());
+        return "almacen";
+    }
+
+    @GetMapping("/reportes")
+    public String reportes(Authentication authentication, Model model) {
+        model.addAttribute("username", authentication.getName());
+        return "reportes";
+    }
 }
