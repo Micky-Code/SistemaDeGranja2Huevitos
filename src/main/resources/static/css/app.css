@@ -16,4 +16,6 @@ body { color: #26342b; }
 .btn-success { --bs-btn-bg: var(--granja-green); --bs-btn-border-color: var(--granja-green); --bs-btn-hover-bg: #1c613a; --bs-btn-hover-border-color: #1c613a; }
 .menu-card { background: white; border: 1px solid #e1e9df; border-radius: 18px; box-shadow: 0 10px 24px rgba(23, 61, 42, .04); }
 .module-icon { display: grid; place-items: center; width: 58px; height: 58px; background: #e9f4e8; border-radius: 15px; font-size: 1.7rem; }
+.maintenance-section { border: 1px solid #e1e9df; border-radius: 14px; padding: 1.25rem; margin: 0 0 1rem; }
+.maintenance-section legend { float: none; width: auto; padding: 0 .35rem; margin: 0 0 .5rem; color: var(--granja-dark); font-size: 1rem; font-weight: 700; }
 @media (max-width: 991.98px) { .brand-panel { min-height: 270px; gap: 1rem; } .brand-footer { display: none; } }

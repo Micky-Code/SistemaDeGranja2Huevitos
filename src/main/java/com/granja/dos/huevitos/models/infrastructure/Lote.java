@@ -1,5 +1,6 @@
 package com.granja.dos.huevitos.models.infrastructure;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,20 +17,29 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "sector", schema = "avicola")
+@Table(name = "lote", schema = "avicola")
 @Getter
 @Setter
 @NoArgsConstructor
-public class Sector {
+public class Lote {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_sector")
-    private Integer idSector;
+    @Column(name = "id_lote")
+    private Integer idLote;
 
     @Column(name = "nombre", length = 100, nullable = false)
     private String nombre;
 
-    @OneToMany(mappedBy = "sector", fetch = FetchType.LAZY)
-    private List<Galpon> galpones = new ArrayList<>();
+    @Column(name = "cantidad_inicial", nullable = false)
+    private Integer cantidadInicial;
+
+    @Column(name = "cantidad_actual", nullable = false)
+    private Integer cantidadActual;
+
+    @Column(name = "fecha_ingreso", nullable = false)
+    private LocalDate fechaIngreso;
+
+    @OneToMany(mappedBy = "lote", fetch = FetchType.LAZY)
+    private List<LoteGalpon> distribuciones = new ArrayList<>();
 }

@@ -35,7 +35,8 @@ public class PageController {
     public String usuarios(Authentication authentication, Model model) {
         model.addAttribute("username", authentication.getName());
         return "usuarios";
-=======
+    }
+
     public String menu(Model model, Principal principal) {
         agregarUsuarioAlModelo(model, principal);
         return "menu";
@@ -52,5 +53,11 @@ public class PageController {
         agregarUsuarioAlModelo(model, principal);
         return "produccion";
 
+    }
+
+    @GetMapping("/empleados")
+    public String empleados(Model model, Principal principal) {
+        agregarUsuarioAlModelo(model, principal);
+        return "empleado/gestionarEmpleado";
     }
 }
