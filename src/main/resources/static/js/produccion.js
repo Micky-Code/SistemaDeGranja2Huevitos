@@ -50,7 +50,7 @@ async function cargarGalpones() {
         const select = document.querySelector('#prod-galpon');
         select.innerHTML = '<option value="">Seleccione Galpón</option>';
         galpones.forEach(g => {
-            select.innerHTML += <option value="${g.idGalpon}">${g.nombre}</option>;
+            select.innerHTML += `<option value="${g.idGalpon}">${g.nombre}</option>`;
         });
     } catch (err) {
         console.error('Error al cargar galpones:', err);

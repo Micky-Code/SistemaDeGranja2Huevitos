@@ -25,7 +25,7 @@ async function cargarSectores() {
                     <td>${s.nombre}</td>
                     <td>${s.descripcion || '-'}</td>
                 </tr>`;
-            select.innerHTML += <option value="${s.idSector}">${s.nombre}</option>;
+            select.innerHTML += `<option value="${s.idSector}">${s.nombre}</option>`;
         });
     } catch (err) {
         console.error('Error al cargar sectores:', err);
@@ -52,7 +52,7 @@ async function cargarGalpones() {
                     <td>${g.capacidad}</td>
                     <td><span class="badge bg-success">${g.estado || 'Activo'}</span></td>
                 </tr>`;
-            selectLG.innerHTML += <option value="${g.idGalpon}">${g.nombre}</option>;
+            selectLG.innerHTML += `<option value="${g.idGalpon}">${g.nombre}</option>`;
         });
     } catch (err) {
         console.error('Error al cargar galpones:', err);
@@ -80,7 +80,7 @@ async function cargarLotes() {
                     <td>${l.cantidadActual}</td>
                     <td>${l.fechaIngreso}</td>
                 </tr>`;
-            selectLG.innerHTML += <option value="${l.idLote}">${l.nombre}</option>;
+            selectLG.innerHTML += `<option value="${l.idLote}">${l.nombre}</option>`;
         });
     } catch (err) {
         console.error('Error al cargar lotes:', err);
