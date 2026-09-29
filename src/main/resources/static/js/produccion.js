@@ -1,133 +1,298 @@
-let todosLosGalpones = [];
-let sectorActual = null;
-let galponActual = null;
-let datosAnalisis = null;
+(() => {
+    let csrfCache = null;
 
-async function cargarSectores() {
-    try {
-        const res = await fetch('/api/infraestructura/sectores', { credentials: 'same-origin' });
-        const sectores = await res.json();
-        
-        const contenedor = document.getElementById('sector-list');
-        contenedor.innerHTML = '';
-        
-        sectores.forEach(s => {
-            contenedor.innerHTML += `
-                <div class="col-md-4">
-                    <div class="card p-3 shadow-sm text-center" style="cursor:pointer;" onclick="seleccionarSector(${s.idSector}, '${s.nombre}')">
-                        <h5 class="fw-bold text-success">${s.nombre}</h5>
-                        <p class="text-muted small mb-0">${s.descripcion || 'Sector de producción'}</p>
-                    </div>
-                </div>
-            `;
-        });
-    } catch (e) { console.error('Error', e); }
-}
-
-async function cargarGalpones() {
-    try {
-        const res = await fetch('/api/infraestructura/galpones', { credentials: 'same-origin' });
-        todosLosGalpones = await res.json();
-    } catch (e) { console.error('Error', e); }
-}
-
-function seleccionarSector(id, nombre) {
-    sectorActual = { id, nombre };
-    document.getElementById('step-sector').classList.add('d-none');
-    document.getElementById('step-galpon').classList.remove('d-none');
-    
-    mostrarGalponesDelSector(id);
-}
-
-function mostrarGalponesDelSector(idSector) {
-    const galpones = todosLosGalpones.filter(g => g.sectorId === idSector);
-    const contenedor = document.getElementById('galpon-list');
-    contenedor.innerHTML = '';
-
-    if(galpones.length === 0) {
-        contenedor.innerHTML = '<div class="alert alert-warning w-100">No hay galpones registrados en este sector.</div>';
-        return;
+    async function getCsrfHeaders() {
+        let token = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
+        let header = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
+        if (!token || !header || token.startsWith('${')) {
+            if (!csrfCache) {
+                try {
+                    const res = await fetch('/api/auth/csrf', { credentials: 'same-origin' });
+                    if (res.ok) {
+                        csrfCache = await res.json();
+                    }
+                } catch (e) {
+                    console.error('Error fetching csrf:', e);
+                }
+            }
+            if (csrfCache) {
+                header = csrfCache.headerName;
+                token = csrfCache.token;
+            }
+        }
+        const headers = { 'Content-Type': 'application/json' };
+        if (token && header) headers[header] = token;
+        return headers;
     }
 
-    galpones.forEach(g => {
-        let claseBg = 'bg-activo';
-        let icon = 'fa-check-circle text-success';
-        if (g.estado === 'Inactivo') { claseBg = 'bg-inactivo'; icon = 'fa-times-circle text-danger'; }
-        else if (g.estado === 'Mantenimiento') { claseBg = 'bg-mantenimiento'; icon = 'fa-wrench text-primary'; }
+    let cacheSectores = [];
+    let cacheGalpones = [];
+    let cacheProduccion = [];
 
-        contenedor.innerHTML += `
-            <div class="col-md-4">
-                <div class="card p-3 shadow-sm galpon-card ${claseBg}" onclick="seleccionarGalpon(${g.idGalpon})">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h5 class="fw-bold mb-0">${g.nombre}</h5>
-                        <i class="fa ${icon} fs-4"></i>
-                    </div>
-                    <p class="mb-0 mt-2 text-dark"><strong>Estado:</strong> ${g.estado}</p>
-                    <p class="small text-muted mb-0">Capacidad: ${g.capacidad}</p>
-                    <button class="btn btn-sm btn-dark mt-2 w-100">Ingresar al Galpón</button>
-                </div>
-            </div>
-        `;
-    });
-}
+    function mostrarNotificacion(mensaje, esError) {
+        if (esError === undefined) esError = false;
+        const alertBox = document.querySelector('#prod-alert');
+        if (!alertBox) return;
+        alertBox.textContent = mensaje;
+        alertBox.className = 'alert ' + (esError ? 'alert-danger' : 'alert-success') + ' shadow-sm rounded-3 mb-4';
+        alertBox.classList.remove('d-none');
+        alertBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        setTimeout(function() { alertBox.classList.add('d-none'); }, 5000);
+    }
 
-function volverSectores() {
-    document.getElementById('step-galpon').classList.add('d-none');
-    document.getElementById('step-sector').classList.remove('d-none');
-}
+    async function cargarSectoresYGalpones() {
+        try {
+            const [resSectores, resGalpones] = await Promise.all([
+                fetch('/api/infraestructura/sectores', { credentials: 'same-origin' }),
+                fetch('/api/infraestructura/galpones', { credentials: 'same-origin' })
+            ]);
 
-async function seleccionarGalpon(idGalpon) {
-    galponActual = idGalpon;
-    document.getElementById('step-galpon').classList.add('d-none');
-    document.getElementById('step-analisis').classList.remove('d-none');
-    document.getElementById('analisis-resultado').classList.add('d-none');
-    
-    // Fetch data
-    try {
-        const res = await fetch(`/api/produccion/analisis/${idGalpon}`, { credentials: 'same-origin' });
-        if(!res.ok) {
-            alert('Este galpón no tiene lotes asignados o no hay datos.');
-            volverGalpones();
+            if (resSectores.ok) cacheSectores = await resSectores.json();
+            if (resGalpones.ok) cacheGalpones = await resGalpones.json();
+
+            const selectSector = document.querySelector('#select-sector-prod');
+            if (selectSector) {
+                selectSector.innerHTML = '<option value="">-- Seleccione un Sector --</option>';
+                cacheSectores.forEach(function(s) {
+                    selectSector.innerHTML += '<option value="' + s.idSector + '">' + s.nombre + '</option>';
+                });
+
+                if (cacheSectores.length > 0) {
+                    selectSector.value = cacheSectores[0].idSector;
+                    mostrarGalponesDelSector(cacheSectores[0].idSector);
+                }
+            }
+        } catch (err) {
+            console.error('Error al cargar sectores/galpones:', err);
+        }
+    }
+
+    function mostrarGalponesDelSector(sectorId) {
+        const contenedor = document.querySelector('#contenedor-galpones');
+        if (!contenedor) return;
+
+        if (!sectorId) {
+            contenedor.innerHTML = '<div class="col-12 text-center text-muted py-4 border rounded-3 bg-white">' +
+                'Seleccione un sector arriba para visualizar sus galpones.</div>';
             return;
         }
-        datosAnalisis = await res.json();
-        
-        document.getElementById('lbl-galpon-sector').innerText = `${datosAnalisis.nombreGalpon} / ${datosAnalisis.nombreSector}`;
-        document.getElementById('lbl-gallinas').innerText = datosAnalisis.cantidadGallinas;
-        document.getElementById('lbl-prod-ayer').innerText = datosAnalisis.produccionAyer;
-        document.getElementById('lbl-prom-diario').innerText = datosAnalisis.promedioProduccionDiaria.toFixed(2);
-        
-    } catch(e) {
-        console.error(e);
-        alert('Error obteniendo datos del galpón.');
-        volverGalpones();
+
+        const idNum = parseInt(sectorId);
+
+        const galponesFiltrados = cacheGalpones.filter(function(g) {
+            const gSectorId = g.sectorId !== undefined ? parseInt(g.sectorId) : null;
+            const gNestedId = (g.sector && g.sector.idSector !== undefined) ? parseInt(g.sector.idSector) : null;
+            
+            return gSectorId === idNum || gNestedId === idNum;
+        });
+
+        if (!galponesFiltrados.length) {
+            contenedor.innerHTML = '<div class="col-12 text-center text-muted py-4 border rounded-3 bg-white">' +
+                'No hay galpones registrados en este sector.</div>';
+            return;
+        }
+
+        let htmlCards = '';
+        galponesFiltrados.forEach(function(g) {
+            let estadoStr = g.estado || 'Activo';
+            let badgeClass = 'bg-success';
+            let iconClass = 'fa-circle-check text-success';
+
+            if (estadoStr === 'Inactivo') {
+                badgeClass = 'bg-danger';
+                iconClass = 'fa-circle-xmark text-danger';
+            } else if (estadoStr === 'Mantenimiento') {
+                badgeClass = 'bg-warning text-dark';
+                iconClass = 'fa-circle-pause text-warning';
+            }
+
+            htmlCards += '<div class="col-md-4 col-lg-3">' +
+                '<div class="card p-3 shadow-sm border-0 rounded-4 h-100 bg-white">' +
+                    '<div class="d-flex justify-content-between align-items-center mb-2">' +
+                        '<h5 class="fw-bold mb-0 text-dark">' + g.nombre + '</h5>' +
+                        '<i class="fa-solid ' + iconClass + ' fs-5"></i>' +
+                    '</div>' +
+                    '<p class="small text-muted mb-1">Capacidad: <strong>' + (g.capacidad || '--') + ' aves</strong></p>' +
+                    '<p class="mb-3"><span class="badge ' + badgeClass + '">' + estadoStr + '</span></p>' +
+                    '<button class="btn btn-outline-success btn-sm w-100 fw-bold mt-auto" ' +
+                            'onclick="abrirModalRegistro(' + g.idGalpon + ', \'' + g.nombre + '\')">' +
+                        '<i class="fa-solid fa-plus me-1"></i>Ingresar Producción' +
+                    '</button>' +
+                '</div>' +
+            '</div>';
+        });
+
+        contenedor.innerHTML = htmlCards;
     }
-}
 
-function volverGalpones() {
-    document.getElementById('step-analisis').classList.add('d-none');
-    document.getElementById('step-galpon').classList.remove('d-none');
-}
+    async function cargarHistorialProduccion() {
+        try {
+            const res = await fetch('/api/produccion', { credentials: 'same-origin' });
+            if (!res.ok) return;
+            cacheProduccion = await res.json();
 
-function realizarAnalisis() {
-    if(!datosAnalisis) return;
-    
-    document.getElementById('lbl-prom-mes').innerText = datosAnalisis.promedioProduccionMes.toFixed(2);
-    const lblEstado = document.getElementById('lbl-estado-prod');
-    lblEstado.innerText = datosAnalisis.estadoProduccion;
-    
-    if (datosAnalisis.estadoProduccion === 'Óptima') {
-        lblEstado.className = 'text-success fw-bold';
-    } else if (datosAnalisis.estadoProduccion === 'Regular') {
-        lblEstado.className = 'text-warning fw-bold';
-    } else {
-        lblEstado.className = 'text-danger fw-bold';
+            const tbody = document.querySelector('#tb-produccion-historial');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            if (!cacheProduccion.length) {
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted py-3">No hay registros de producción.</td></tr>';
+                return;
+            }
+
+            cacheProduccion.forEach(function(p) {
+                let galponNombre = p.nombreGalpon || (p.galpon ? p.galpon.nombre : ('Galpón ID: ' + (p.galponId || '--')));
+                let fechaStr = p.fecha ? p.fecha.split('T')[0] : '';
+                let totalHuevos = (p.huevosPardo || 0) + (p.huevosRojo || 0) + (p.huevosFisurado || 0) + (p.huevosRoto || 0);
+
+                tbody.innerHTML += '<tr>' +
+                    '<td>' + fechaStr + '</td>' +
+                    '<td><strong>' + galponNombre + '</strong></td>' +
+                    '<td><span class="badge bg-danger">' + (p.mortalidad || 0) + ' muertas</span></td>' +
+                    '<td><span class="badge bg-success fs-6">' + totalHuevos + ' huevos</span></td>' +
+                    '<td><small class="text-muted">Pardo: ' + (p.huevosPardo || 0) + ' | Rojo: ' + (p.huevosRojo || 0) + ' | Roto: ' + (p.huevosRoto || 0) + '</small></td>' +
+                    '</tr>';
+            });
+        } catch (err) {
+            console.error('Error al cargar historial de producción:', err);
+        }
     }
-    
-    document.getElementById('analisis-resultado').classList.remove('d-none');
-}
 
-document.addEventListener('DOMContentLoaded', () => {
-    cargarSectores();
-    cargarGalpones();
-});
+    document.addEventListener('DOMContentLoaded', function() {
+        const selectSector = document.querySelector('#select-sector-prod');
+        if (selectSector) {
+            selectSector.addEventListener('change', function(e) {
+                mostrarGalponesDelSector(e.target.value);
+            });
+        }
+        
+        const formProd = document.querySelector('#form-produccion');
+        if (formProd) {
+            formProd.addEventListener('submit', async function(e) {
+                e.preventDefault();
+
+                let fechaVal = document.querySelector('#prod-fecha').value;
+                if (fechaVal && fechaVal.includes('/')) {
+                    const partes = fechaVal.split('/');
+                    if (partes.length === 3) {
+                        fechaVal = partes[2] + '-' + partes[1] + '-' + partes[0];
+                    }
+                }
+
+                const payload = {
+                    loteGalponId: parseInt(document.querySelector('#prod-galpon-id').value),
+                    fecha: fechaVal,
+                    cantidadHuevosBuenos: parseInt(document.querySelector('#prod-pardo').value || '0') + parseInt(document.querySelector('#prod-rojo').value || '0'),
+                    cantidadHuevosSucios: parseInt(document.querySelector('#prod-fisurado').value || '0'),
+                    cantidadHuevosRotos: parseInt(document.querySelector('#prod-roto').value || '0'),
+                    observaciones: "Registro diario desde interfaz web" // O un campo de texto si lo tienes en el modal
+                };
+
+                try {
+                    const headers = await getCsrfHeaders();
+                    const res = await fetch('/api/produccion', {
+                        method: 'POST',
+                        credentials: 'same-origin',
+                        headers: headers,
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (res.ok) {
+                        const modalElem = document.querySelector('#modalRegistroProduccion');
+                        if (modalElem && typeof bootstrap !== 'undefined') {
+                            const modal = bootstrap.Modal.getInstance(modalElem);
+                            if (modal) modal.hide();
+                        }
+
+                        mostrarNotificacion('¡Registro de producción guardado exitosamente!');
+                        await cargarHistorialProduccion();
+                    } else {
+                        const errData = await res.json().catch(function() { return {}; });
+                        mostrarNotificacion(errData.message || 'Error al guardar la producción.', true);
+                    }
+                } catch (err) {
+                    mostrarNotificacion('Error de conexión al guardar.', true);
+                }
+            });
+        }
+
+        cargarSectoresYGalpones();
+        cargarHistorialProduccion();
+    });
+
+    window.abrirModalRegistro = function(galponId, galponNombre) {
+        document.querySelector('#prod-galpon-id').value = galponId;
+        document.querySelector('#modalProdGalponNombre').textContent = 'Registrar Producción - ' + galponNombre;
+        document.querySelector('#prod-fecha').value = new Date().toISOString().split('T')[0];
+        document.querySelector('#prod-mortalidad').value = '0';
+        document.querySelector('#prod-pardo').value = '0';
+        document.querySelector('#prod-rojo').value = '0';
+        document.querySelector('#prod-fisurado').value = '0';
+        document.querySelector('#prod-roto').value = '0';
+
+        const modalElem = document.querySelector('#modalRegistroProduccion');
+        if (modalElem && typeof bootstrap !== 'undefined') {
+            const modal = new bootstrap.Modal(modalElem);
+            modal.show();
+        }
+    };
+
+    window.abrirModalAnalisis = function() {
+        const modalElem = document.querySelector('#modalAnalisisProduccion');
+        if (modalElem && typeof bootstrap !== 'undefined') {
+            const modal = new bootstrap.Modal(modalElem);
+            modal.show();
+            const primerBoton = document.querySelector('.btn-filtro-tiempo[data-periodo="dia"]');
+            window.filtrarAnalisis('dia', primerBoton);
+        }
+    };
+
+    window.filtrarAnalisis = function(periodo, btnElement) {
+        if (btnElement) {
+            document.querySelectorAll('.btn-filtro-tiempo').forEach(function(b) {
+                b.classList.remove('active');
+            });
+            btnElement.classList.add('active');
+        }
+
+        const ahora = new Date();
+        let fechaLimite = new Date();
+
+        if (periodo === 'semana') {
+            fechaLimite.setDate(ahora.getDate() - 7);
+        } else if (periodo === 'mes') {
+            fechaLimite.setDate(ahora.getDate() - 30);
+        } else {
+            fechaLimite.setHours(0, 0, 0, 0);
+        }
+
+        const filtrados = cacheProduccion.filter(function(p) {
+            if (!p.fecha) return false;
+            const f = new Date(p.fecha);
+            return f >= fechaLimite;
+        });
+
+        let totalPardo = 0, totalRojo = 0, totalFisurado = 0, totalRoto = 0, totalMortalidad = 0;
+
+        filtrados.forEach(function(p) {
+            totalPardo += (p.huevosPardo || 0);
+            totalRojo += (p.huevosRojo || 0);
+            totalFisurado += (p.huevosFisurado || 0);
+            totalRoto += (p.huevosRoto || 0);
+            totalMortalidad += (p.mortalidad || 0);
+        });
+
+        const totalHuevos = totalPardo + totalRojo + totalFisurado + totalRoto;
+        const totalMerma = totalFisurado + totalRoto;
+        const porcentajeMerma = totalHuevos > 0 ? ((totalMerma / totalHuevos) * 100).toFixed(1) : '0';
+
+        document.querySelector('#an-total-huevos').textContent = totalHuevos;
+        document.querySelector('#an-total-mortalidad').textContent = totalMortalidad;
+        document.querySelector('#an-porcentaje-merma').textContent = porcentajeMerma + '%';
+
+        document.querySelector('#an-pardo').textContent = totalPardo;
+        document.querySelector('#an-rojo').textContent = totalRojo;
+        document.querySelector('#an-fisurado').textContent = totalFisurado;
+        document.querySelector('#an-roto').textContent = totalRoto;
+    };
+})();
