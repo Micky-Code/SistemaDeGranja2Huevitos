@@ -42,4 +42,5 @@ public class Lote {
 
     @OneToMany(mappedBy = "lote", fetch = FetchType.LAZY)
     private List<LoteGalpon> distribuciones = new ArrayList<>();
+
 }

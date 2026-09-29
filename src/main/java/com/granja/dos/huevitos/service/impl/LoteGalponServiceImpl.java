@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 
 import com.granja.dos.huevitos.dto.LoteGalponRequestDTO; // Asegúrate de tener este DTO creado
 import com.granja.dos.huevitos.models.infrastructure.Galpon;
-import com.granja.dos.huevitos.models.infrastructure.LoteAves;
+
 import com.granja.dos.huevitos.models.infrastructure.LoteGalpon;
 import com.granja.dos.huevitos.repository.GalponRepository;
 import com.granja.dos.huevitos.repository.LoteAvesRepository;
@@ -28,8 +28,8 @@ public class LoteGalponServiceImpl implements LoteGalponService{
         Galpon galpon = galponRepository.findById(dto.getGalponId())
             .orElseThrow(() -> new RuntimeException("Galpón no encontrado"));
 
-        LoteAves lote = loteAvesRepository.findById(dto.getLoteId())
-            .orElseThrow(() -> new RuntimeException("Lote no encontrado"));
+//        LoteAves lote = loteAvesRepository.findById(dto.getLoteId())
+//            .orElseThrow(() -> new RuntimeException("Lote no encontrado"));
 
         if (dto.getCantidadAves() > galpon.getCapacidad()) {
             throw new IllegalArgumentException("La cantidad de aves excede la capacidad máxima del galpón.");
@@ -37,7 +37,7 @@ public class LoteGalponServiceImpl implements LoteGalponService{
 
         LoteGalpon loteGalpon = new LoteGalpon();
         loteGalpon.setGalpon(galpon);
-        loteGalpon.setLote(lote);
+//        loteGalpon.setLote(lote);
         loteGalpon.setCantidadAves(dto.getCantidadAves());
         loteGalpon.setFechaIngreso(dto.getFechaIngreso());
 

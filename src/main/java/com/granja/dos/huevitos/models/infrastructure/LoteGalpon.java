@@ -17,9 +17,9 @@ public class LoteGalpon {
     @Column(name = "id_lote_galpon")
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_lote", nullable = false)
-    private LoteAves lote;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "id_lote", nullable = false)
+//    private LoteAves lote;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_galpon", nullable = false)
@@ -30,4 +30,9 @@ public class LoteGalpon {
 
     @Column(name = "fecha_ingreso", nullable = false)
     private LocalDateTime fechaIngreso;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_lote", nullable = false)
+    private Lote lote;
+
 }

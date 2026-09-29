@@ -3,7 +3,6 @@ package com.granja.dos.huevitos.models.infrastructure;
 import java.util.ArrayList;
 import java.util.List;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -48,7 +47,7 @@ public class Galpon {
 
     @OneToMany(mappedBy = "galpon", fetch = FetchType.LAZY)
     private List<LoteGalpon> lotes = new ArrayList<>();
-}    
+    
     @CreationTimestamp
     private LocalDate fechaRegistro;
 }
