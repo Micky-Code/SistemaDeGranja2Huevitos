@@ -1,7 +1,10 @@
 package com.granja.dos.huevitos.models.infrastructure;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.hibernate.annotations.CreationTimestamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -29,7 +32,7 @@ public class Galpon {
     @Column(name = "id_galpon")
     private Integer idGalpon;
 
-    @Column(name = "nombre", length = 50, nullable = false)
+    @Column(name = "nombre", nullable = false, length = 50)
     private String nombre;
 
     @Column(name = "capacidad", nullable = false)
@@ -38,9 +41,13 @@ public class Galpon {
     @Column(name = "estado", length = 20)
     private String estado = "Activo";
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_sector", nullable = false)
     private Sector sector;
+
+    @CreationTimestamp
+    @Column(name = "fecha_registro")
+    private LocalDate fechaRegistro;
 
     @OneToMany(mappedBy = "galpon", fetch = FetchType.LAZY)
     private List<LoteGalpon> lotes = new ArrayList<>();

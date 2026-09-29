@@ -5,9 +5,9 @@ import java.util.List;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.granja.dos.huevitos.models.personal.AsignacionGalpon;
+import com.granja.dos.huevitos.models.personal.Asignacion;
 
-public interface AsignacionGalponRepository extends JpaRepository<AsignacionGalpon, Integer> {
+public interface AsignacionGalponRepository extends JpaRepository<Asignacion, Integer> {
     @EntityGraph(attributePaths = "galpon")
-    List<AsignacionGalpon> findAllByEmpleado_IdEmpleadoOrderByFechaInicioDesc(Integer idEmpleado);
+    List<Asignacion> findAllByEmpleado_IdEmpleadoOrderByFechaInicioDesc(Integer idEmpleado);
 }

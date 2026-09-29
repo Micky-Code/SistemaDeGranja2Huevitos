@@ -22,14 +22,15 @@ public class UsuarioDetailsServiceImpl implements UserDetailsService {
     @Override
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) {
-    	var usuario = usuarios.findByUsername(username)
+        var usuario = usuarios.findByUsername(username)
                 .orElseThrow(() ->
                         new UsernameNotFoundException("Credenciales inválidas."));
 
+        boolean isAdmin = usuario.getRol() != null && "ADMIN".equalsIgnoreCase(usuario.getRol().getNombre());
+
         return User.withUsername(usuario.getUsername())
                 .password(usuario.getPassword())
-                .authorities(usuario.getRol().getIdRol() != null && usuario.getRol().getIdRol() == 1
-                        && "ADMIN".equals(usuario.getRol().getNombre()) ? "ROLE_ADMIN" : "ROLE_USER")
+                .authorities(isAdmin ? "ROLE_ADMIN" : "ROLE_USER")
                 .disabled(!Boolean.TRUE.equals(usuario.getEstado()))
                 .build();        
     }

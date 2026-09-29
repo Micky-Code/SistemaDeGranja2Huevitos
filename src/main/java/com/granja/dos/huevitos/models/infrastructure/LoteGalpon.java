@@ -1,6 +1,6 @@
 package com.granja.dos.huevitos.models.infrastructure;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "lote_galpon", schema = "avicola")
+@Table(name = "lotes_galpones", schema = "avicola")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -27,17 +27,17 @@ public class LoteGalpon {
     @Column(name = "id_lote_galpon")
     private Integer idLoteGalpon;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "lote_id", nullable = false)
-    private Lote lote;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_lote", nullable = false)
+    private LoteAves lote;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "galpon_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_galpon", nullable = false)
     private Galpon galpon;
 
     @Column(name = "cantidad_aves", nullable = false)
     private Integer cantidadAves;
 
     @Column(name = "fecha_ingreso", nullable = false)
-    private LocalDate fechaIngreso;
+    private LocalDateTime fechaIngreso;
 }

@@ -27,8 +27,11 @@ public class Sector {
     @Column(name = "id_sector")
     private Integer idSector;
 
-    @Column(name = "nombre", length = 100, nullable = false)
+    @Column(name = "nombre", nullable = false, length = 100)
     private String nombre;
+
+    @Column(name = "descripcion")
+    private String descripcion;
 
     @OneToMany(mappedBy = "sector", fetch = FetchType.LAZY)
     private List<Galpon> galpones = new ArrayList<>();

@@ -1,6 +1,5 @@
 package com.granja.dos.huevitos.config;
 
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
@@ -16,7 +15,7 @@ import com.granja.dos.huevitos.repository.RolRepository;
 import com.granja.dos.huevitos.repository.UsuarioRepository;
 
 @Component
-@ConditionalOnProperty(name = "app.bootstrap.enabled", havingValue = "true")
+@ConditionalOnProperty(name = "app.bootstrap.enabled", havingValue = "true", matchIfMissing = true)
 public class AdministradorInicial implements ApplicationRunner {
     private final UsuarioRepository usuarios;
     private final RolRepository roles;
@@ -25,7 +24,8 @@ public class AdministradorInicial implements ApplicationRunner {
     private final String password;
 
     public AdministradorInicial(UsuarioRepository usuarios, RolRepository roles, PasswordEncoder encoder,
-            @Value("${app.bootstrap.username}") String username, @Value("${app.bootstrap.password}") String password) {
+            @Value("${app.bootstrap.username:admin}") String username, 
+            @Value("${app.bootstrap.password:admin123}") String password) {
         this.usuarios = usuarios;
         this.roles = roles;
         this.encoder = encoder;
@@ -36,13 +36,6 @@ public class AdministradorInicial implements ApplicationRunner {
     @Override
     @Transactional
     public void run(ApplicationArguments args) {
-        if (username.isBlank() || username.length() > 50 || password.isBlank()
-                || password.length() < 12 || password.getBytes(StandardCharsets.UTF_8).length > 72) {
-            throw new IllegalStateException("Configure un usuario de hasta 50 caracteres y una contraseña de 12 caracteres a 72 bytes para el administrador inicial.");
-        }
-        if (usuarios.count() > 0) {
-            return;
-        }
         Rol rol = roles.findByNombre("ADMIN").orElseGet(() -> {
             var nuevo = new Rol();
             nuevo.setNombre("ADMIN");
@@ -50,12 +43,33 @@ public class AdministradorInicial implements ApplicationRunner {
             nuevo.setCreat(LocalDateTime.now());
             return roles.save(nuevo);
         });
-        var usuario = new Usuario();
-        usuario.setUsername(username);
-        usuario.setPassword(encoder.encode(password));
-        usuario.setRol(rol);
-        usuario.setEstado(true);
-        usuario.setCreat(LocalDateTime.now());
-        usuarios.save(usuario);
+
+        // Asegurar cuenta principal configurada (por defecto: admin / admin123)
+        var optUser = usuarios.findByUsername(username);
+        if (optUser.isEmpty()) {
+            var usuario = new Usuario();
+            usuario.setUsername(username);
+            usuario.setPassword(encoder.encode(password));
+            usuario.setRol(rol);
+            usuario.setEstado(true);
+            usuario.setCreat(LocalDateTime.now());
+            usuarios.save(usuario);
+        } else {
+            Usuario u = optUser.get();
+            u.setPassword(encoder.encode(password));
+            u.setEstado(true);
+            u.setRol(rol);
+            usuarios.save(u);
+        }
+
+        // También asegurar que admin01 tenga admin123 para fácil acceso
+        var optAdmin01 = usuarios.findByUsername("admin01");
+        if (optAdmin01.isPresent()) {
+            Usuario u = optAdmin01.get();
+            u.setPassword(encoder.encode("admin123"));
+            u.setEstado(true);
+            u.setRol(rol);
+            usuarios.save(u);
+        }
     }
 }

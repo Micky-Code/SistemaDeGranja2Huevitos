@@ -23,23 +23,26 @@ public class PageController {
     }
 
     @GetMapping("/menu")
-
     public String menu(Authentication authentication, Model model) {
-        model.addAttribute("username", authentication.getName());
-        model.addAttribute("isAdmin", authentication.getAuthorities().stream()
-                .anyMatch(authority -> "ROLE_ADMIN".equals(authority.getAuthority())));
+        if (authentication != null) {
+            model.addAttribute("username", authentication.getName());
+            model.addAttribute("isAdmin", authentication.getAuthorities().stream()
+                    .anyMatch(authority -> "ROLE_ADMIN".equals(authority.getAuthority())));
+        } else {
+            model.addAttribute("username", "Invitado");
+            model.addAttribute("isAdmin", false);
+        }
         return "menu";
     }
 
     @GetMapping("/usuarios")
     public String usuarios(Authentication authentication, Model model) {
-        model.addAttribute("username", authentication.getName());
+        if (authentication != null) {
+            model.addAttribute("username", authentication.getName());
+        } else {
+            model.addAttribute("username", "Invitado");
+        }
         return "usuarios";
-    }
-
-    public String menu(Model model, Principal principal) {
-        agregarUsuarioAlModelo(model, principal);
-        return "menu";
     }
 
     @GetMapping("/infraestructura")
@@ -52,12 +55,23 @@ public class PageController {
     public String produccion(Model model, Principal principal) {
         agregarUsuarioAlModelo(model, principal);
         return "produccion";
-
     }
 
     @GetMapping("/empleados")
     public String empleados(Model model, Principal principal) {
         agregarUsuarioAlModelo(model, principal);
         return "empleado/gestionarEmpleado";
+    }
+
+    @GetMapping("/empleados/asignacion")
+    public String asignacionGalpon(Model model, Principal principal) {
+        agregarUsuarioAlModelo(model, principal);
+        return "empleado/asignacionGalpon";
+    }
+
+    @GetMapping("/empleados/guardia")
+    public String asignarGuardia(Model model, Principal principal) {
+        agregarUsuarioAlModelo(model, principal);
+        return "empleado/asignarGuardia";
     }
 }

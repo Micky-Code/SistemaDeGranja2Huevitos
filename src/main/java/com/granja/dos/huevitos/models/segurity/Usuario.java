@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
  * @author WChui
  */
 @Entity
-@Table(name = "usuario", schema = "Avicola")
+@Table(name = "usuario", schema = "avicola")
 @Data
 @NoArgsConstructor
 public class Usuario {

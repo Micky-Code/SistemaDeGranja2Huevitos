@@ -17,7 +17,7 @@ import com.granja.dos.huevitos.dto.GalponResumenResponse;
 import com.granja.dos.huevitos.dto.TipoDocumentoResponse;
 import com.granja.dos.huevitos.exception.BadRequestException;
 import com.granja.dos.huevitos.exception.ExceptionResponse;
-import com.granja.dos.huevitos.models.personal.AsignacionGalpon;
+import com.granja.dos.huevitos.models.personal.Asignacion;
 import com.granja.dos.huevitos.models.personal.DocumentoIdentidad;
 import com.granja.dos.huevitos.models.personal.Empleado;
 import com.granja.dos.huevitos.models.personal.Guardia;
@@ -167,9 +167,9 @@ public class EmpleadoMantenimientoService {
         var galpon = galpones.findById(request.idGalpon())
                 .filter(item -> "Activo".equalsIgnoreCase(item.getEstado()))
                 .orElseThrow(() -> new BadRequestException("Seleccione un galpón activo."));
-        AsignacionGalpon asignacion;
+        Asignacion asignacion;
         if (request.idAsignacion() == null) {
-            asignacion = new AsignacionGalpon();
+            asignacion = new Asignacion();
             asignacion.setEmpleado(empleado);
         } else {
             asignacion = asignaciones.findById(request.idAsignacion())

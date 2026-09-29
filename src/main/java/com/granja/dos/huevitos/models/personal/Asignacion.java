@@ -27,7 +27,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class AsignacionGalpon {
+public class Asignacion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
