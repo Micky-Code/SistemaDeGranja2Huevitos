@@ -10,5 +10,5 @@ public class ProduccionDiariaRequestDTO {
     private Integer cantidadHuevosRotos;
     private Integer cantidadHuevosSucios;
     private String observaciones;
-    private Integer loteGalponId;
+    private Integer idGalpon;
 }

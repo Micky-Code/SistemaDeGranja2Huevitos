@@ -24,20 +24,26 @@ public class ProduccionDiariaServiceImpl implements ProduccionDiariaService {
     @Override
     @Transactional
     public ProduccionDiariaResponseDTO registrarProduccion(ProduccionDiariaRequestDTO requestDTO) {
-        LoteGalpon loteGalpon = loteGalponRepository.findById(requestDTO.getLoteGalponId())
-                .orElseThrow(() -> new RuntimeException("LoteGalpon no encontrado"));
+    
+    List<LoteGalpon> lotes = loteGalponRepository.findByGalpon_IdGalpon(requestDTO.getIdGalpon());
 
-        ProduccionDiaria produccionDiaria = ProduccionDiaria.builder()
-                .fecha(requestDTO.getFecha())
-                .cantidadHuevosBuenos(requestDTO.getCantidadHuevosBuenos())
-                .cantidadHuevosRotos(requestDTO.getCantidadHuevosRotos())
-                .cantidadHuevosSucios(requestDTO.getCantidadHuevosSucios())
-                .observaciones(requestDTO.getObservaciones())
-                .loteGalpon(loteGalpon)
-                .build();
+    if (lotes.isEmpty()) {
+        throw new RuntimeException("No hay un lote asignado a este galpón");
+    }
 
-        ProduccionDiaria savedProduccion = produccionDiariaRepository.save(produccionDiaria);
-        return mapToDTO(savedProduccion);
+    LoteGalpon loteGalpon = lotes.get(0);
+
+    ProduccionDiaria produccionDiaria = ProduccionDiaria.builder()
+            .fecha(requestDTO.getFecha())
+            .cantidadHuevosBuenos(requestDTO.getCantidadHuevosBuenos())
+            .cantidadHuevosRotos(requestDTO.getCantidadHuevosRotos())
+            .cantidadHuevosSucios(requestDTO.getCantidadHuevosSucios())
+            .observaciones(requestDTO.getObservaciones())
+            .loteGalpon(loteGalpon)
+            .build();
+
+    ProduccionDiaria savedProduccion = produccionDiariaRepository.save(produccionDiaria);
+    return mapToDTO(savedProduccion);
     }
 
     @Override

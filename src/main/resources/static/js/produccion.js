@@ -49,7 +49,7 @@
 
             if (resSectores.ok) cacheSectores = await resSectores.json();
             if (resGalpones.ok) cacheGalpones = await resGalpones.json();
-
+            
             const selectSector = document.querySelector('#select-sector-prod');
             if (selectSector) {
                 selectSector.innerHTML = '<option value="">-- Seleccione un Sector --</option>';
@@ -77,23 +77,30 @@
             return;
         }
 
-        const idNum = parseInt(sectorId);
+        const idStr = String(sectorId).trim();
+
+        const selectSector = document.querySelector('#select-sector-prod');
+        const nombreSectorSeleccionado = selectSector && selectSector.options[selectSector.selectedIndex] ? selectSector.options[selectSector.selectedIndex].text.toLowerCase() : '';
 
         const galponesFiltrados = cacheGalpones.filter(function(g) {
-            const gSectorId = g.sectorId !== undefined ? parseInt(g.sectorId) : null;
-            const gNestedId = (g.sector && g.sector.idSector !== undefined) ? parseInt(g.sector.idSector) : null;
-            
-            return gSectorId === idNum || gNestedId === idNum;
+            const gSectorId = g.sectorId !== undefined ? String(g.sectorId).trim() : null;
+            const gNestedId = (g.sector && g.sector.idSector !== undefined) ? String(g.sector.idSector).trim() : null;
+            const gSectorNombre = (g.sectorNombre || (g.sector && g.sector.nombre) || '').toLowerCase();
+
+            return gSectorId === idStr || gNestedId === idStr || 
+                   (gSectorNombre && gSectorNombre.includes(nombreSectorSeleccionado));
         });
 
-        if (!galponesFiltrados.length) {
+        const galponesAMostrar = galponesFiltrados;
+
+        if (!galponesAMostrar.length) {
             contenedor.innerHTML = '<div class="col-12 text-center text-muted py-4 border rounded-3 bg-white">' +
                 'No hay galpones registrados en este sector.</div>';
             return;
         }
 
         let htmlCards = '';
-        galponesFiltrados.forEach(function(g) {
+        galponesAMostrar.forEach(function(g) {
             let estadoStr = g.estado || 'Activo';
             let badgeClass = 'bg-success';
             let iconClass = 'fa-circle-check text-success';
@@ -141,16 +148,20 @@
             }
 
             cacheProduccion.forEach(function(p) {
-                let galponNombre = p.nombreGalpon || (p.galpon ? p.galpon.nombre : ('Galpón ID: ' + (p.galponId || '--')));
+                let galponNombre = 'Galpón ID: ' + (p.loteGalponId || '--');
                 let fechaStr = p.fecha ? p.fecha.split('T')[0] : '';
-                let totalHuevos = (p.huevosPardo || 0) + (p.huevosRojo || 0) + (p.huevosFisurado || 0) + (p.huevosRoto || 0);
+    
+                let buenos = p.cantidadHuevosBuenos || 0;
+                let rotos = p.cantidadHuevosRotos || 0;
+                let sucios = p.cantidadHuevosSucios || 0;
+                let totalHuevos = buenos + rotos + sucios;
 
                 tbody.innerHTML += '<tr>' +
                     '<td>' + fechaStr + '</td>' +
                     '<td><strong>' + galponNombre + '</strong></td>' +
-                    '<td><span class="badge bg-danger">' + (p.mortalidad || 0) + ' muertas</span></td>' +
+                    '<td><span class="badge bg-secondary">Registrado</span></td>' +
                     '<td><span class="badge bg-success fs-6">' + totalHuevos + ' huevos</span></td>' +
-                    '<td><small class="text-muted">Pardo: ' + (p.huevosPardo || 0) + ' | Rojo: ' + (p.huevosRojo || 0) + ' | Roto: ' + (p.huevosRoto || 0) + '</small></td>' +
+                    '<td><small class="text-muted">Buenos: ' + buenos + ' | Rotos: ' + rotos + ' | Sucios: ' + sucios + '</small></td>' +
                     '</tr>';
             });
         } catch (err) {
@@ -180,12 +191,12 @@
                 }
 
                 const payload = {
-                    loteGalponId: parseInt(document.querySelector('#prod-galpon-id').value),
-                    fecha: fechaVal,
-                    cantidadHuevosBuenos: parseInt(document.querySelector('#prod-pardo').value || '0') + parseInt(document.querySelector('#prod-rojo').value || '0'),
-                    cantidadHuevosSucios: parseInt(document.querySelector('#prod-fisurado').value || '0'),
-                    cantidadHuevosRotos: parseInt(document.querySelector('#prod-roto').value || '0'),
-                    observaciones: "Registro diario desde interfaz web" // O un campo de texto si lo tienes en el modal
+                    fecha: document.querySelector('#prod-fecha').value,
+                    cantidadHuevosBuenos: parseInt(document.querySelector('#prod-pardo').value || 0) + parseInt(document.querySelector('#prod-rojo').value || 0),
+                    cantidadHuevosRotos: parseInt(document.querySelector('#prod-roto').value || 0),
+                    cantidadHuevosSucios: parseInt(document.querySelector('#prod-fisurado').value || 0),
+                    observaciones: "Mortalidad registrada: " + document.querySelector('#prod-mortalidad').value,
+                    idGalpon: parseInt(document.querySelector('#prod-galpon-id').value)
                 };
 
                 try {
@@ -275,14 +286,13 @@
         let totalPardo = 0, totalRojo = 0, totalFisurado = 0, totalRoto = 0, totalMortalidad = 0;
 
         filtrados.forEach(function(p) {
-            totalPardo += (p.huevosPardo || 0);
-            totalRojo += (p.huevosRojo || 0);
-            totalFisurado += (p.huevosFisurado || 0);
-            totalRoto += (p.huevosRoto || 0);
-            totalMortalidad += (p.mortalidad || 0);
+            totalPardo += (p.cantidadHuevosBuenos || 0);
+            totalRoto += (p.cantidadHuevosRotos || 0);
+            totalFisurado += (p.cantidadHuevosSucios || 0);
+            totalMortalidad += 0;
         });
 
-        const totalHuevos = totalPardo + totalRojo + totalFisurado + totalRoto;
+        const totalHuevos = totalPardo + totalRoto + totalFisurado;
         const totalMerma = totalFisurado + totalRoto;
         const porcentajeMerma = totalHuevos > 0 ? ((totalMerma / totalHuevos) * 100).toFixed(1) : '0';
 
@@ -291,7 +301,7 @@
         document.querySelector('#an-porcentaje-merma').textContent = porcentajeMerma + '%';
 
         document.querySelector('#an-pardo').textContent = totalPardo;
-        document.querySelector('#an-rojo').textContent = totalRojo;
+        document.querySelector('#an-rojo').textContent = 0;
         document.querySelector('#an-fisurado').textContent = totalFisurado;
         document.querySelector('#an-roto').textContent = totalRoto;
     };
