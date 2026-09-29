@@ -2,6 +2,10 @@ package com.granja.dos.huevitos.models.infrastructure;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+import org.hibernate.annotations.CreationTimestamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -18,9 +22,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "galpon", schema = "avicola")
 @Getter
 @Setter
+@Table(name = "galpon", schema = "avicola")
 @NoArgsConstructor
 public class Galpon {
 
@@ -44,4 +48,7 @@ public class Galpon {
 
     @OneToMany(mappedBy = "galpon", fetch = FetchType.LAZY)
     private List<LoteGalpon> lotes = new ArrayList<>();
+}    
+    @CreationTimestamp
+    private LocalDate fechaRegistro;
 }

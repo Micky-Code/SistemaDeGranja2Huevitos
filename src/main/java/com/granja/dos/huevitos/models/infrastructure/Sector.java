@@ -1,24 +1,14 @@
 package com.granja.dos.huevitos.models.infrastructure;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Table(name = "sector", schema = "avicola")
-@Getter
-@Setter
+@Getter @Setter
 @NoArgsConstructor
 public class Sector {
 
@@ -27,9 +17,11 @@ public class Sector {
     @Column(name = "id_sector")
     private Integer idSector;
 
-    @Column(name = "nombre", length = 100, nullable = false)
+    @Column(name = "nombre", nullable = false, length = 100)
     private String nombre;
 
     @OneToMany(mappedBy = "sector", fetch = FetchType.LAZY)
-    private List<Galpon> galpones = new ArrayList<>();
+    private List<Galpon> galpones;
+    
+    private String descripcion;
 }
