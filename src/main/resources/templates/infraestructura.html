@@ -55,37 +55,102 @@
             </div>
 
             <!-- 2. Galpon -->
-            <div class="col-lg-6">
-                <div class="card border-0 shadow-sm rounded-4 p-4 bg-white h-100">
-                    <h5 class="fw-bold mb-3 text-secondary">Gestión de Galpones</h5>
-                    <form id="form-galpon" class="mb-4">
-                        <div class="mb-3">
-                            <label for="gal-nombre" class="form-label">Nombre del Galpón</label>
-                            <input type="text" id="gal-nombre" class="form-control" placeholder="Ej: Galpón G-01" required>
-                        </div>
-                        <div class="row g-2 mb-3">
-                            <div class="col-md-6">
-                                <label for="gal-capacidad" class="form-label">Capacidad (Aves)</label>
-                                <input type="number" id="gal-capacidad" class="form-control" min="1" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="gal-sector" class="form-label">Sector</label>
-                                <select id="gal-sector" class="form-select" required></select>
-                            </div>
-                        </div>
-                        <button type="submit" class="btn btn-success w-100 fw-semibold">Guardar Galpón</button>
-                    </form>
+			<!-- 2. Galpón (Actualizado con selector estricto de G-01 a G-20) -->
+			<div class="col-lg-6">
+			    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white h-100">
+			        <h5 class="fw-bold mb-3 text-secondary">Gestión de Galpones</h5>
+			        <form id="form-galpon" class="mb-4">
+			            <div class="mb-3">
+			                <label for="gal-nombre" class="form-label">Nombre del Galpón</label>
+			                <select id="gal-nombre" class="form-select" required>
+			                    <option value="">Seleccione Galpón</option>
+			                    <!-- Script generará o colocamos estricto -->
+			                    <option value="Galpón G-01">Galpón G-01</option>
+			                    <option value="Galpón G-02">Galpón G-02</option>
+			                    <option value="Galpón G-03">Galpón G-03</option>
+			                    <option value="Galpón G-04">Galpón G-04</option>
+			                    <option value="Galpón G-05">Galpón G-05</option>
+			                    <option value="Galpón G-06">Galpón G-06</option>
+			                    <option value="Galpón G-07">Galpón G-07</option>
+			                    <option value="Galpón G-08">Galpón G-08</option>
+			                    <option value="Galpón G-09">Galpón G-09</option>
+			                    <option value="Galpón G-10">Galpón G-10</option>
+			                    <option value="Galpón G-11">Galpón G-11</option>
+			                    <option value="Galpón G-12">Galpón G-12</option>
+			                    <option value="Galpón G-13">Galpón G-13</option>
+			                    <option value="Galpón G-14">Galpón G-14</option>
+			                    <option value="Galpón G-15">Galpón G-15</option>
+			                    <option value="Galpón G-16">Galpón G-16</option>
+			                    <option value="Galpón G-17">Galpón G-17</option>
+			                    <option value="Galpón G-18">Galpón G-18</option>
+			                    <option value="Galpón G-19">Galpón G-19</option>
+			                    <option value="Galpón G-20">Galpón G-20</option>
+			                </select>
+			            </div>
+			            <div class="row g-2 mb-3">
+			                <div class="col-md-6">
+			                    <label for="gal-capacidad" class="form-label">Capacidad (Aves)</label>
+			                    <input type="number" id="gal-capacidad" class="form-control" min="1" required>
+			                </div>
+			                <div class="col-md-6">
+			                    <label for="gal-sector" class="form-label">Sector</label>
+			                    <select id="gal-sector" class="form-select" required></select>
+			                </div>
+			            </div>
+			            <button type="submit" class="btn btn-success w-100 fw-semibold">Guardar Galpón</button>
+			        </form>
 
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle">
-                            <thead class="table-light">
-                                <tr><th>ID</th><th>Galpón</th><th>Capacidad</th><th>Estado</th></tr>
-                            </thead>
-                            <tbody id="tb-galpones"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+			        <div class="table-responsive">
+			            <table class="table table-hover align-middle">
+			                <thead class="table-light">
+			                    <tr><th>ID</th><th>Galpón</th><th>Estado</th><th>Sector</th></tr>
+			                </thead>
+			                <tbody id="tb-galpones"></tbody>
+			            </table>
+			        </div>
+			    </div>
+			</div>
+
+			<!-- 4. LoteGalpon (Distribución con Cascada Interactiva) -->
+			<div class="col-lg-6">
+			    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white h-100">
+			        <h5 class="fw-bold mb-3 text-secondary">Distribución Aves en Galpón</h5>
+			        <form id="form-lote-galpon">
+			            <div class="mb-3">
+			                <label for="lg-lote" class="form-label">Seleccionar Lote</label>
+			                <select id="lg-lote" class="form-select" required>
+			                    <option value="">Seleccione Lote</option>
+			                </select>
+			            </div>
+			            
+			            <div class="mb-3">
+			                <label for="lg-cantidad" class="form-label">Cantidad de Aves (Automático del Lote)</label>
+			                <input type="number" id="lg-cantidad" class="form-control bg-light" readonly required>
+			            </div>
+
+			            <div class="mb-3">
+			                <label for="lg-sector-filtro" class="form-label">Filtrar por Sector</label>
+			                <select id="lg-sector-filtro" class="form-select" required>
+			                    <option value="">Seleccione Sector</option>
+			                </select>
+			            </div>
+
+			            <div class="mb-3">
+			                <label for="lg-galpon" class="form-label">Galpón Disponible</label>
+			                <select id="lg-galpon" class="form-select" required>
+			                    <option value="">Primero seleccione un sector</option>
+			                </select>
+			            </div>
+
+			            <div class="mb-3">
+			                <label for="lg-fecha" class="form-label">Fecha de Asignación</label>
+			                <input type="date" id="lg-fecha" class="form-control" required>
+			            </div>
+
+			            <button type="submit" class="btn btn-success w-100 fw-semibold py-2">Asignar Aves a Galpón</button>
+			        </form>
+			    </div>
+			</div>
 
             <!-- 3. LoteAves -->
             <div class="col-lg-6">
@@ -151,6 +216,16 @@
             </div>
         </div>
     </div>
+	<div class="row mt-4">
+	    <div class="col-12">
+	        <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+	            <h5 class="fw-bold mb-3 text-secondary">Selección Interactiva de Galpones por Sector</h5>
+	            <div id="contenedor-sectores-galpones" class="d-flex flex-column gap-4">
+	                <!-- Aquí se inyectarán dinámicamente los sectores y sus galpones en tarjetas -->
+	            </div>
+	        </div>
+	    </div>
+	</div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script th:src="@{/js/infraestructura.js}" src="/js/infraestructura.js"></script>

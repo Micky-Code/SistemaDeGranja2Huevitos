@@ -34,8 +34,8 @@ public class PageController {
     @GetMapping("/usuarios")
     public String usuarios(Authentication authentication, Model model) {
         model.addAttribute("username", authentication.getName());
-        return "usuarios";
-=======
+        return "usuarios"; 
+    }
     public String menu(Model model, Principal principal) {
         agregarUsuarioAlModelo(model, principal);
         return "menu";
