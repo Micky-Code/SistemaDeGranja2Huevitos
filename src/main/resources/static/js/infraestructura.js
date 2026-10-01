@@ -55,6 +55,7 @@ async function cargarSectores() {
                     <td>${s.nombre}</td>
                     <td>${s.descripcion || 'Sin descripción'}</td>
                 </tr>`;
+            select.innerHTML += `<option value="${s.idSector}">${s.nombre}</option>`;
         });
 
         if (selectGalponSec) selectGalponSec.innerHTML += opcionesHTML; 
