@@ -3,71 +3,62 @@ let sectorActual = null;
 let galponActual = null;
 let datosAnalisis = null;
 
+async function consultarIndicadores(url) {
+    const res = await fetch(url, { credentials: 'same-origin' });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.message || data.mensaje || 'No se pudieron cargar los datos de producción.');
+    return data;
+}
+
+function errorIndicadores(error) {
+    const mensaje = document.getElementById('produccion-mensaje');
+    mensaje.textContent = error.message;
+    mensaje.className = 'alert alert-danger';
+}
+
 async function cargarSectores() {
-    try {
-        const res = await fetch('/api/infraestructura/sectores', { credentials: 'same-origin' });
-        const sectores = await res.json();
-        
-        const contenedor = document.getElementById('sector-list');
-        contenedor.innerHTML = '';
-        
-        sectores.forEach(s => {
-            contenedor.innerHTML += `
-                <div class="col-md-4">
-                    <div class="card p-3 shadow-sm text-center" style="cursor:pointer;" onclick="seleccionarSector(${s.idSector}, '${s.nombre}')">
-                        <h5 class="fw-bold text-success">${s.nombre}</h5>
-                        <p class="text-muted small mb-0">${s.descripcion || 'Sector de producción'}</p>
-                    </div>
-                </div>
-            `;
-        });
-    } catch (e) { console.error('Error', e); }
+    const sectores = await consultarIndicadores('/api/infraestructura/sectores');
+    const contenedor = document.getElementById('sector-list');
+    contenedor.replaceChildren();
+    if (!sectores.length) contenedor.textContent = 'No hay sectores registrados.';
+    sectores.forEach(s => {
+        const columna = document.createElement('div'); columna.className = 'col-md-4';
+        const boton = document.createElement('button'); boton.type = 'button';
+        boton.className = 'card p-3 shadow-sm text-center w-100';
+        const titulo = document.createElement('span'); titulo.className = 'fw-bold text-success fs-5'; titulo.textContent = s.nombre;
+        const descripcion = document.createElement('span'); descripcion.className = 'text-muted small';
+        descripcion.textContent = s.descripcion || 'Sector de producción';
+        boton.append(titulo, descripcion); boton.addEventListener('click', () => seleccionarSector(s.idSector, s.nombre));
+        columna.append(boton); contenedor.append(columna);
+    });
 }
 
 async function cargarGalpones() {
-    try {
-        const res = await fetch('/api/infraestructura/galpones', { credentials: 'same-origin' });
-        todosLosGalpones = await res.json();
-    } catch (e) { console.error('Error', e); }
+    todosLosGalpones = await consultarIndicadores('/api/infraestructura/galpones');
 }
 
 function seleccionarSector(id, nombre) {
     sectorActual = { id, nombre };
     document.getElementById('step-sector').classList.add('d-none');
     document.getElementById('step-galpon').classList.remove('d-none');
-    
     mostrarGalponesDelSector(id);
 }
 
 function mostrarGalponesDelSector(idSector) {
     const galpones = todosLosGalpones.filter(g => g.sectorId === idSector);
     const contenedor = document.getElementById('galpon-list');
-    contenedor.innerHTML = '';
-
-    if(galpones.length === 0) {
-        contenedor.innerHTML = '<div class="alert alert-warning w-100">No hay galpones registrados en este sector.</div>';
-        return;
-    }
-
+    contenedor.replaceChildren();
+    if (!galpones.length) contenedor.textContent = 'No hay galpones registrados en este sector.';
     galpones.forEach(g => {
-        let claseBg = 'bg-activo';
-        let icon = 'fa-check-circle text-success';
-        if (g.estado === 'Inactivo') { claseBg = 'bg-inactivo'; icon = 'fa-times-circle text-danger'; }
-        else if (g.estado === 'Mantenimiento') { claseBg = 'bg-mantenimiento'; icon = 'fa-wrench text-primary'; }
-
-        contenedor.innerHTML += `
-            <div class="col-md-4">
-                <div class="card p-3 shadow-sm galpon-card ${claseBg}" onclick="seleccionarGalpon(${g.idGalpon})">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h5 class="fw-bold mb-0">${g.nombre}</h5>
-                        <i class="fa ${icon} fs-4"></i>
-                    </div>
-                    <p class="mb-0 mt-2 text-dark"><strong>Estado:</strong> ${g.estado}</p>
-                    <p class="small text-muted mb-0">Capacidad: ${g.capacidad}</p>
-                    <button class="btn btn-sm btn-dark mt-2 w-100">Ingresar al Galpón</button>
-                </div>
-            </div>
-        `;
+        const columna = document.createElement('div'); columna.className = 'col-md-4';
+        const boton = document.createElement('button'); boton.type = 'button';
+        const fondo = g.estado === 'Inactivo' ? 'bg-inactivo' : g.estado === 'Mantenimiento' ? 'bg-mantenimiento' : 'bg-activo';
+        boton.className = `card p-3 shadow-sm galpon-card w-100 text-start ${fondo}`;
+        const titulo = document.createElement('span'); titulo.className = 'fw-bold fs-5'; titulo.textContent = g.nombre;
+        const estado = document.createElement('span'); estado.textContent = `Estado: ${g.estado}`;
+        const capacidad = document.createElement('span'); capacidad.className = 'small text-muted'; capacidad.textContent = `Capacidad: ${g.capacidad}`;
+        boton.append(titulo, estado, capacidad); boton.addEventListener('click', () => seleccionarGalpon(g.idGalpon));
+        columna.append(boton); contenedor.append(columna);
     });
 }
 
@@ -78,56 +69,40 @@ function volverSectores() {
 
 async function seleccionarGalpon(idGalpon) {
     galponActual = idGalpon;
+    datosAnalisis = null;
     document.getElementById('step-galpon').classList.add('d-none');
     document.getElementById('step-analisis').classList.remove('d-none');
     document.getElementById('analisis-resultado').classList.add('d-none');
-    
-    // Fetch data
-    try {
-        const res = await fetch(`/api/produccion/analisis/${idGalpon}`, { credentials: 'same-origin' });
-        if(!res.ok) {
-            alert('Este galpón no tiene lotes asignados o no hay datos.');
-            volverGalpones();
-            return;
-        }
-        datosAnalisis = await res.json();
-        
-        document.getElementById('lbl-galpon-sector').innerText = `${datosAnalisis.nombreGalpon} / ${datosAnalisis.nombreSector}`;
-        document.getElementById('lbl-gallinas').innerText = datosAnalisis.cantidadGallinas;
-        document.getElementById('lbl-prod-ayer').innerText = datosAnalisis.produccionAyer;
-        document.getElementById('lbl-prom-diario').innerText = datosAnalisis.promedioProduccionDiaria.toFixed(2);
-        
-    } catch(e) {
-        console.error(e);
-        alert('Error obteniendo datos del galpón.');
-        volverGalpones();
+    for (const id of ['lbl-galpon-sector', 'lbl-gallinas', 'lbl-prod-ayer', 'lbl-prom-diario']) {
+        document.getElementById(id).textContent = '…';
     }
+    try {
+        const data = await consultarIndicadores(`/api/produccion/registro/indicadores/${idGalpon}`);
+        if (galponActual !== idGalpon) return;
+        datosAnalisis = data;
+        document.getElementById('lbl-galpon-sector').textContent = `${data.nombreGalpon} / ${data.nombreSector}`;
+        document.getElementById('lbl-gallinas').textContent = data.cantidadGallinas;
+        document.getElementById('lbl-prod-ayer').textContent = data.produccionAyer;
+        document.getElementById('lbl-prom-diario').textContent = data.promedioProduccionDiaria.toFixed(2);
+    } catch (error) { errorIndicadores(error); volverGalpones(); }
 }
 
 function volverGalpones() {
+    galponActual = null; datosAnalisis = null;
     document.getElementById('step-analisis').classList.add('d-none');
     document.getElementById('step-galpon').classList.remove('d-none');
 }
 
 function realizarAnalisis() {
-    if(!datosAnalisis) return;
-    
-    document.getElementById('lbl-prom-mes').innerText = datosAnalisis.promedioProduccionMes.toFixed(2);
-    const lblEstado = document.getElementById('lbl-estado-prod');
-    lblEstado.innerText = datosAnalisis.estadoProduccion;
-    
-    if (datosAnalisis.estadoProduccion === 'Óptima') {
-        lblEstado.className = 'text-success fw-bold';
-    } else if (datosAnalisis.estadoProduccion === 'Regular') {
-        lblEstado.className = 'text-warning fw-bold';
-    } else {
-        lblEstado.className = 'text-danger fw-bold';
-    }
-    
+    if (!datosAnalisis) return;
+    document.getElementById('lbl-prom-mes').textContent = datosAnalisis.promedioProduccionMes.toFixed(2);
+    const estado = document.getElementById('lbl-estado-prod');
+    estado.textContent = datosAnalisis.estadoProduccion;
+    estado.className = `fw-bold ${datosAnalisis.estadoProduccion === 'Óptima' ? 'text-success' : datosAnalisis.estadoProduccion === 'Regular' ? 'text-warning' : 'text-secondary'}`;
     document.getElementById('analisis-resultado').classList.remove('d-none');
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    cargarSectores();
-    cargarGalpones();
+document.addEventListener('DOMContentLoaded', async () => {
+    try { await cargarGalpones(); await cargarSectores(); }
+    catch (error) { errorIndicadores(error); }
 });
