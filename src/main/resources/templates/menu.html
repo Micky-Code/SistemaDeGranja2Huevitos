@@ -41,11 +41,11 @@
             <p class="text-secondary mb-3">Consulta y registro de la producción diaria.</p>
             <span class="badge text-bg-success">Abrir módulo</span>
         </a></div>
-        <div class="col-sm-6 col-lg-4"><article class="menu-card h-100 p-4">
-            <div class="module-icon" aria-hidden="true">📦</div><h2 class="h5 fw-bold mt-4">Inventario</h2>
-            <p class="text-secondary mb-3">Control de existencias y suministros.</p>
-            <span class="badge text-bg-light border">Próximamente</span>
-        </article></div>
+        <div class="col-sm-6 col-lg-4"><a class="menu-card h-100 p-4 d-block text-decoration-none text-body" th:href="@{/maestro}">
+            <div class="module-icon" aria-hidden="true">⚙️</div><h2 class="h5 fw-bold mt-4">Mantenimiento</h2>
+            <p class="text-secondary mb-3">Mantenimiento de tablas: tipos de huevo.</p>
+            <span class="badge text-bg-success">Abrir módulo</span>
+        </a></div>        
 		<div class="col-sm-6 col-lg-4">
 		    <a class="menu-card h-100 p-4 d-block text-decoration-none text-body" th:href="@{/infraestructura}">
 		        <div class="module-icon" aria-hidden="true">🏡</div>
@@ -54,6 +54,7 @@
 		        <span class="badge text-bg-success">Abrir módulo</span>
 		    </a>
 		</div>
+    </div>
 </main>
 </body>
 </html>

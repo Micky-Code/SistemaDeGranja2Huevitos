@@ -2,6 +2,7 @@ let todosLosGalpones = [];
 let sectorActual = null;
 let galponActual = null;
 let datosAnalisis = null;
+let consultaIndicadores = 0;
 
 async function consultarIndicadores(url) {
     const res = await fetch(url, { credentials: 'same-origin' });
@@ -69,6 +70,7 @@ function volverSectores() {
 
 async function seleccionarGalpon(idGalpon) {
     galponActual = idGalpon;
+    const consulta = ++consultaIndicadores;
     datosAnalisis = null;
     document.getElementById('step-galpon').classList.add('d-none');
     document.getElementById('step-analisis').classList.remove('d-none');
@@ -77,14 +79,25 @@ async function seleccionarGalpon(idGalpon) {
         document.getElementById(id).textContent = '…';
     }
     try {
-        const data = await consultarIndicadores(`/api/produccion/registro/indicadores/${idGalpon}`);
-        if (galponActual !== idGalpon) return;
+        const modo = document.getElementById('indicador-modo').value;
+        const fecha = document.getElementById('indicador-fecha');
+        fecha.disabled = modo === 'productivo';
+        const params = new URLSearchParams();
+        if (modo === 'productivo') params.set('masProductivo', 'true');
+        else if (fecha.value) params.set('fecha', fecha.value);
+        const data = await consultarIndicadores(`/api/produccion/registro/indicadores/${idGalpon}?${params}`);
+        if (galponActual !== idGalpon || consulta !== consultaIndicadores) return;
+        if (modo === 'fecha') fecha.value = data.fechaConsultada;
+        document.getElementById('lbl-produccion-titulo').textContent = modo === 'productivo' ? 'Día más productivo' : 'Producción por fecha';
+        document.getElementById('indicador-ayuda').textContent = data.fechaConsultada
+            ? (modo === 'productivo' ? 'Mayor producción del historial: ' : 'Fecha consultada: ') + data.fechaConsultada
+            : 'No hay registros de producción para este galpón.';
         datosAnalisis = data;
         document.getElementById('lbl-galpon-sector').textContent = `${data.nombreGalpon} / ${data.nombreSector}`;
         document.getElementById('lbl-gallinas').textContent = data.cantidadGallinas;
-        document.getElementById('lbl-prod-ayer').textContent = data.produccionAyer;
+        document.getElementById('lbl-prod-ayer').textContent = data.produccionFecha;
         document.getElementById('lbl-prom-diario').textContent = data.promedioProduccionDiaria.toFixed(2);
-    } catch (error) { errorIndicadores(error); volverGalpones(); }
+    } catch (error) { if (consulta === consultaIndicadores && galponActual === idGalpon) { errorIndicadores(error); volverGalpones(); } }
 }
 
 function volverGalpones() {
@@ -103,6 +116,13 @@ function realizarAnalisis() {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
+    document.getElementById('indicador-modo').addEventListener('change', () => {
+        document.getElementById('indicador-fecha').disabled = document.getElementById('indicador-modo').value === 'productivo';
+        if (galponActual !== null) seleccionarGalpon(galponActual);
+    });
+    document.getElementById('indicador-fecha').addEventListener('change', () => {
+        if (galponActual !== null) seleccionarGalpon(galponActual);
+    });
     try { await cargarGalpones(); await cargarSectores(); }
     catch (error) { errorIndicadores(error); }
 });

@@ -43,11 +43,11 @@
           </div>
           <div class="col-md-6">
             <label for="asig_fechaInicio" class="form-label">Fecha Inicio *</label>
-            <input type="date" class="form-control" id="asig_fechaInicio" required>
+            <input type="date" class="form-control" id="asig_fechaInicio" disabled>
           </div>
           <div class="col-md-6">
             <label for="asig_fechaFin" class="form-label">Fecha Fin *</label>
-            <input type="date" class="form-control" id="asig_fechaFin" required>
+            <input type="date" class="form-control" id="asig_fechaFin" disabled>
           </div>
           <div class="col-12 text-end mt-3">
             <button type="button" class="btn btn-outline-secondary me-2" onclick="limpiarFormAsig()">
@@ -91,6 +91,16 @@
   let listaPersonal = JSON.parse(localStorage.getItem('db_personal')) || [];
   let listaAsignaciones = JSON.parse(localStorage.getItem('db_asignaciones')) || [];
 
+  function actualizarFechasAsignacion() {
+    const esPivote = document.getElementById('asig_tipo').value === 'PIVOTE';
+    ['asig_fechaInicio', 'asig_fechaFin'].forEach(id => {
+      const campo = document.getElementById(id);
+      campo.disabled = !esPivote;
+      campo.required = esPivote;
+      if (!esPivote) campo.value = '';
+    });
+  }
+
   function cargarComboPersonal() {
     const select = document.getElementById('asig_personal');
     select.innerHTML = '<option value="" disabled selected>Seleccione Personal...</option>';
@@ -126,6 +136,7 @@
 
   function guardarAsignacion(e) {
     e.preventDefault();
+    actualizarFechasAsignacion();
     const idx = document.getElementById('asig_index').value;
     const data = {
       idAsignacion: document.getElementById('asig_id').value,
@@ -161,6 +172,7 @@
     document.getElementById('asig_tipo').value = item.tipoAsignacion;
     document.getElementById('asig_fechaInicio').value = item.fechaInicio;
     document.getElementById('asig_fechaFin').value = item.fechaFin;
+    actualizarFechasAsignacion();
     document.getElementById('btnGuardarAsig').innerHTML = '<i class="bi bi-check-circle me-1"></i> Actualizar Asignación';
   }
 
@@ -174,12 +186,15 @@
 
   function limpiarFormAsig() {
     document.getElementById('formAsignacion').reset();
+    actualizarFechasAsignacion();
     document.getElementById('asig_index').value = "";
     document.getElementById('asig_id').disabled = false;
     document.getElementById('btnGuardarAsig').innerHTML = '<i class="bi bi-save me-1"></i> Guardar Asignación';
   }
 
   document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('asig_tipo').addEventListener('change', actualizarFechasAsignacion);
+    actualizarFechasAsignacion();
     cargarComboPersonal();
     renderTablaAsig();
   });

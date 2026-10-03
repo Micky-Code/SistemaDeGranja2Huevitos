@@ -45,6 +45,21 @@ public class ProduccionRegistroService {
     }
 
     @Transactional
+    public TipoResponse editarTipo(Integer id, TipoRequest request) {
+        TipoHuevo tipo = tipos.findById(id)
+                .orElseThrow(() -> new BadRequestException("El tipo de huevo no existe."));
+        String nombre = request.nombre().trim();
+        if (nombre.isEmpty()) throw new BadRequestException("Ingrese el nombre del tipo de huevo.");
+        if (tipos.findAll().stream().anyMatch(t -> !t.getIdTipo().equals(id)
+                && t.getNombre().equalsIgnoreCase(nombre)))
+            throw new BadRequestException("Ya existe un tipo de huevo con ese nombre.");
+        tipo.setNombre(nombre);
+        tipo.setDescripcion(request.descripcion());
+        tipo = tipos.save(tipo);
+        return new TipoResponse(tipo.getIdTipo(), tipo.getNombre(), tipo.getDescripcion());
+    }
+
+    @Transactional
     public RegistroResponse registrar(RegistroRequest request) {
         if (request.fecha().isAfter(LocalDate.now(ZoneId.of("America/Lima"))))
             throw new BadRequestException("La fecha no puede ser futura.");
@@ -111,12 +126,23 @@ public class ProduccionRegistroService {
     }
 
     public AnalisisGalponDTO analisis(Integer id) {
+        return analisis(id, null, false);
+    }
+
+    public AnalisisGalponDTO analisis(Integer id, LocalDate fecha, boolean masProductivo) {
         Galpon galpon = galpones.findById(id).orElseThrow(() -> new BadRequestException("El galpón no existe."));
         List<ProduccionGalpon> registros = producciones.findByGalpon_IdGalpon(id);
         LocalDate hoy = LocalDate.now(ZoneId.of("America/Lima"));
         int aves = lotes.findByGalpon_IdGalpon(id).stream().mapToInt(LoteGalpon::getCantidadAves).sum();
         Map<LocalDate, Long> porDia = registros.stream().collect(Collectors.groupingBy(
                 ProduccionGalpon::getFecha, Collectors.summingLong(ProduccionGalpon::getTotalHuevos)));
+        LocalDate fechaConsultada = fecha == null ? hoy.minusDays(1) : fecha;
+        if (masProductivo) {
+            fechaConsultada = porDia.entrySet().stream()
+                    .max(Comparator.<Map.Entry<LocalDate, Long>>comparingLong(Map.Entry::getValue)
+                            .thenComparing(Map.Entry::getKey))
+                    .map(Map.Entry::getKey).orElse(null);
+        }
         double promedio = porDia.values().stream().mapToLong(Long::longValue).average().orElse(0);
         double mensual = porDia.entrySet().stream().filter(e -> e.getKey().getYear() == hoy.getYear()
                         && e.getKey().getMonth() == hoy.getMonth())
@@ -127,6 +153,8 @@ public class ProduccionRegistroService {
         dto.setNombreSector(galpon.getSector().getNombre());
         dto.setCantidadGallinas(aves);
         dto.setProduccionAyer(Math.toIntExact(porDia.getOrDefault(hoy.minusDays(1), 0L)));
+        dto.setFechaConsultada(fechaConsultada);
+        dto.setProduccionFecha(fechaConsultada == null ? 0L : porDia.getOrDefault(fechaConsultada, 0L));
         dto.setPromedioProduccionDiaria(promedio);
         dto.setPromedioProduccionMes(mensual);
         dto.setEstadoProduccion(registros.isEmpty() ? "Sin registros" : aves == 0 ? "Sin aves asignadas"

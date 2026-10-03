@@ -9,7 +9,7 @@ import lombok.Setter;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "produccion_sector", schema = "public")
+@Table(name = "produccion_sector", schema = "avicola")
 @Getter
 @Setter
 @NoArgsConstructor

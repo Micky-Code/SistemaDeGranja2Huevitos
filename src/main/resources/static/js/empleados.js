@@ -35,11 +35,24 @@ async function readEmployeeJson(response) {
 
 function toggleSection(toggle, fields) {
     fields.hidden = !toggle.checked;
-    const requiredIds = ['guard-shift', 'guard-start', 'barn', 'assignment-type', 'assignment-start'];
+    const requiredIds = ['guard-shift', 'guard-start', 'barn', 'assignment-type'];
     for (const input of fields.querySelectorAll('input, select')) {
         input.required = toggle.checked && requiredIds.includes(input.id);
     }
+    if (fields === assignmentFields) updateAssignmentDates();
 }
+
+function updateAssignmentDates() {
+    const isPivot = assignmentToggle.checked && document.querySelector('#assignment-type').value === 'PIVOTE';
+    const start = document.querySelector('#assignment-start');
+    const end = document.querySelector('#assignment-end');
+    start.disabled = !isPivot;
+    end.disabled = !isPivot;
+    start.required = isPivot;
+    end.required = false;
+}
+
+document.querySelector('#assignment-type').addEventListener('change', updateAssignmentDates);
 
 guardToggle.addEventListener('change', () => toggleSection(guardToggle, guardFields));
 assignmentToggle.addEventListener('change', () => toggleSection(assignmentToggle, assignmentFields));
@@ -176,10 +189,12 @@ function buildPayload() {
     }
     if (assignmentToggle.checked) {
         const assignmentId = document.querySelector('#assignment-id').value;
+        const isPivot = document.querySelector('#assignment-type').value === 'PIVOTE';
         payload.asignacion = { idAsignacion: assignmentId ? Number(assignmentId) : null,
             idGalpon: Number(barnSelect.value), tipoAsignacion: document.querySelector('#assignment-type').value,
-            fechaInicio: document.querySelector('#assignment-start').value,
-            fechaFin: nullableValue('#assignment-end') };
+            fechaInicio: isPivot ? document.querySelector('#assignment-start').value
+                : nullableValue('#assignment-start') || document.querySelector('#entry-date').value,
+            fechaFin: isPivot ? nullableValue('#assignment-end') : null };
     }
     return payload;
 }

@@ -60,6 +60,20 @@
                 <button class="btn btn-sm btn-outline-secondary" onclick="volverGalpones()"><i class="fa fa-arrow-left"></i> Cambiar Galpón</button>
             </div>
             
+            <div class="row g-3 align-items-end mb-4">
+                <div class="col-md-4">
+                    <label for="indicador-modo" class="form-label">Consultar producción</label>
+                    <select id="indicador-modo" class="form-select">
+                        <option value="fecha">Por fecha</option>
+                        <option value="productivo">Día más productivo</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label for="indicador-fecha" class="form-label">Fecha</label>
+                    <input id="indicador-fecha" type="date" class="form-control">
+                </div>
+                <div class="col-md-4"><p id="indicador-ayuda" class="text-muted small mb-0" aria-live="polite">Por defecto se consulta ayer.</p></div>
+            </div>
             <div class="row text-center mb-4">
                 <div class="col-md-3">
                     <div class="p-3 bg-white border rounded shadow-sm">
@@ -75,7 +89,7 @@
                 </div>
                 <div class="col-md-3">
                     <div class="p-3 bg-white border rounded shadow-sm">
-                        <h6 class="text-muted">Producción Ayer</h6>
+                        <h6 class="text-muted" id="lbl-produccion-titulo">Producción por fecha</h6>
                         <h5 class="fw-bold text-warning" id="lbl-prod-ayer">0</h5>
                     </div>
                 </div>
@@ -103,22 +117,7 @@
         </section>
         <section id="panel-registro" class="d-none" role="tabpanel" aria-labelledby="tab-registro">
             <div class="row g-4">
-                <div class="col-lg-4">
-                    <div class="card border-0 shadow-sm p-4">
-                        <h5>Catálogo de tipos de huevo</h5>
-                        <form id="form-tipo-huevo">
-                            <label for="th-nombre" class="form-label">Nombre</label>
-                            <input id="th-nombre" class="form-control mb-2" required maxlength="100" placeholder="Ej.: Extra, Primera">
-                            <label for="th-descripcion" class="form-label">Descripción / calibre</label>
-                            <input id="th-descripcion" class="form-control mb-3">
-                            <button class="btn btn-outline-success w-100" type="submit">Registrar tipo de huevo</button>
-                        </form>
-                        <div class="table-responsive mt-3"><table class="table table-sm">
-                            <thead><tr><th>Nombre</th><th>Descripción</th></tr></thead><tbody id="tb-tipos-huevo"></tbody>
-                        </table></div>
-                    </div>
-                </div>
-                <div class="col-lg-4">
+                <div class="col-lg-6">
                     <div class="card border-0 shadow-sm p-4">
                         <h5>Registro diario por galpón</h5>
                         <form id="form-produccion">
@@ -139,7 +138,7 @@
                         </form>
                     </div>
                 </div>
-                <div class="col-lg-4">
+                <div class="col-lg-6">
                     <div class="card border-0 shadow-sm p-4">
                         <h5>Resumen por sector</h5>
                         <div class="table-responsive"><table class="table table-sm">
@@ -161,7 +160,7 @@
         </section>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script th:src="@{/js/produccion.js}" src="/js/produccion.js"></script>
+    <script th:src="@{/js/produccion.js(v='filtros-fecha-1')}" src="/js/produccion.js"></script>
     <script th:src="@{/js/produccion-registro.js}" src="/js/produccion-registro.js"></script>
 </body>
 </html>

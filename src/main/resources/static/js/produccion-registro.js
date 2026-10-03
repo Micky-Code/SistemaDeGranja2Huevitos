@@ -40,11 +40,10 @@
             .reduce((suma, input) => suma + Number(input.value || 0), 0).toLocaleString('es-PE');
     }
     function renderTipos() {
-        tabla('tb-tipos-huevo', tipos.map(t => [t.nombre, t.descripcion]), 2);
         const container = $('contenedor-tipos-huevo');
         const previos = new Map([...container.querySelectorAll('input')].map(i => [i.dataset.tipo, i.value]));
         container.replaceChildren();
-        if (!tipos.length) container.textContent = 'Registre primero un tipo de huevo.';
+        if (!tipos.length) container.textContent = 'Registre primero un tipo de huevo en MAESTRO → TIPO DE HUEVO.';
         tipos.forEach(tipo => {
             const label = document.createElement('label');
             label.className = 'form-label'; label.htmlFor = `cantidad-${tipo.idTipo}`; label.textContent = tipo.nombre;
@@ -84,20 +83,12 @@
         $('prod-fecha').value = hoy; $('prod-fecha').max = hoy;
         $('guardar-produccion').disabled = true;
         $('prod-galpon').addEventListener('change', sectorSeleccionado);
-        $('form-tipo-huevo').addEventListener('submit', async event => {
-            event.preventDefault(); const boton = event.submitter; boton.disabled = true;
-            try {
-                await request(`${api}/tipos-huevo`, { nombre: $('th-nombre').value.trim(), descripcion: $('th-descripcion').value.trim() });
-                $('form-tipo-huevo').reset();
-                tipos = await request(`${api}/tipos-huevo`); renderTipos(); mensaje('Tipo de huevo registrado.');
-            } catch (e) { mensaje(e.message, true); } finally { boton.disabled = false; }
-        });
         $('form-produccion').addEventListener('submit', async event => {
             event.preventDefault();
             const boton = $('guardar-produccion'); boton.disabled = true;
             let guardado = false;
             try {
-                if (!tipos.length) throw new Error('Registre un tipo de huevo.');
+                if (!tipos.length) throw new Error('Registre un tipo de huevo en MAESTRO → TIPO DE HUEVO.');
                 const detalles = [...document.querySelectorAll('.cantidad-huevo')].map(i => ({ tipoHuevoId: Number(i.dataset.tipo), cantidad: Number(i.value) }));
                 await request(api, { fecha: $('prod-fecha').value, galponId: Number($('prod-galpon').value),
                     observacion: $('prod-observacion').value.trim(), detalles });

@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.time.LocalDate;
+import org.springframework.format.annotation.DateTimeFormat;
 
 @RestController
 @RequestMapping("/api/produccion/registro")
@@ -22,6 +24,11 @@ public class ProduccionRegistroController {
     @ResponseStatus(HttpStatus.CREATED)
     public TipoResponse crearTipo(@Valid @RequestBody TipoRequest request) { return service.crearTipo(request); }
 
+    @PutMapping("/tipos-huevo/{id}")
+    public TipoResponse editarTipo(@PathVariable Integer id, @Valid @RequestBody TipoRequest request) {
+        return service.editarTipo(id, request);
+    }
+
     @GetMapping
     public List<RegistroResponse> listar() { return service.listar(); }
 
@@ -33,5 +40,9 @@ public class ProduccionRegistroController {
     public List<SectorResponse> sectores() { return service.resumen(); }
 
     @GetMapping("/indicadores/{id}")
-    public AnalisisGalponDTO indicadores(@PathVariable Integer id) { return service.analisis(id); }
+    public AnalisisGalponDTO indicadores(@PathVariable Integer id,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha,
+            @RequestParam(defaultValue = "false") boolean masProductivo) {
+        return service.analisis(id, fecha, masProductivo);
+    }
 }

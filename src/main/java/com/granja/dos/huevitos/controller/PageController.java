@@ -51,6 +51,12 @@ public class PageController {
         return "infraestructura";
     }
 
+    @GetMapping("/maestro")
+    public String maestro(Model model, Principal principal) {
+        agregarUsuarioAlModelo(model, principal);
+        return "maestro";
+    }
+
     @GetMapping("/produccion")
     public String produccion(Model model, Principal principal) {
         agregarUsuarioAlModelo(model, principal);

@@ -77,7 +77,7 @@ public class SecurityConfig {
                 .formLogin(config -> config.disable())
                 .httpBasic(config -> config.disable())
                 .authorizeHttpRequests(config -> config
-                        .requestMatchers(HttpMethod.GET, "/", "/login", "/css/**", "/js/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/", "/login", "/favicon.ico", "/css/**", "/js/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/auth/csrf").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
                         .requestMatchers("/usuarios", "/api/usuarios", "/api/usuarios/**").hasRole("ADMIN")
