@@ -27,9 +27,7 @@ async function cargarSectores() {
         const boton = document.createElement('button'); boton.type = 'button';
         boton.className = 'card p-3 shadow-sm text-center w-100';
         const titulo = document.createElement('span'); titulo.className = 'fw-bold text-success fs-5'; titulo.textContent = s.nombre;
-        const descripcion = document.createElement('span'); descripcion.className = 'text-muted small';
-        descripcion.textContent = s.descripcion || 'Sector de producción';
-        boton.append(titulo, descripcion); boton.addEventListener('click', () => seleccionarSector(s.idSector, s.nombre));
+        boton.append(titulo); boton.addEventListener('click', () => seleccionarSector(s.idSector, s.nombre));
         columna.append(boton); contenedor.append(columna);
     });
 }

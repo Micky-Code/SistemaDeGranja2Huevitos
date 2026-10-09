@@ -21,31 +21,59 @@ public class SectorServiceImpl implements SectorService {
     public List<SectorResponseDTO> listarTodos() {
         List<Sector> sectoresDB = sectorRepository.findAll();
         
-        return sectoresDB.stream().map(sector -> {
-            SectorResponseDTO dto = new SectorResponseDTO();
-            dto.setIdSector(sector.getIdSector());
-            dto.setNombre(sector.getNombre());
-            dto.setDescripcion(sector.getDescripcion());
-            return dto;
-        }).toList();
+        return sectoresDB.stream().map(this::mapToDTO).toList();
     }
     
     @Override
     public SectorResponseDTO guardarSector(SectorRequestDTO request) {
-        // 1. Mapeo de entrada: DTO a Entidad (Aislamiento de la base de datos)
+        // Validar nombre único
+        if (sectorRepository.existsByNombreIgnoreCase(request.getNombre())) {
+            throw new IllegalArgumentException("Ya existe un sector con el nombre: " + request.getNombre());
+        }
+
         Sector nuevoSector = new Sector();
         nuevoSector.setNombre(request.getNombre());
-        nuevoSector.setDescripcion(request.getDescripcion());
 
-        // 2. Persistencia física
         Sector sectorGuardado = sectorRepository.save(nuevoSector);
+        return mapToDTO(sectorGuardado);
+    }
 
-        // 3. Mapeo de salida: Entidad a DTO (Contrato hacia el frontend)
+    @Override
+    public void eliminarSector(Integer id) {
+        Sector sector = sectorRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("No se encontró el sector con ID: " + id));
+
+        // Validar que el sector no tenga galpones asociados
+        if (sector.getGalpones() != null && !sector.getGalpones().isEmpty()) {
+            throw new IllegalStateException(
+                    "No se puede eliminar el sector '" + sector.getNombre() +
+                    "' porque tiene " + sector.getGalpones().size() + " galpón(es) asociado(s). " +
+                    "Elimine o reasigne los galpones primero.");
+        }
+
+        sectorRepository.delete(sector);
+    }
+
+    @Override
+    public SectorResponseDTO actualizarSector(Integer id, SectorRequestDTO request) {
+        Sector sector = sectorRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("No se encontró el sector con ID: " + id));
+
+        // Validar nombre único (excluyendo el sector actual)
+        if (sectorRepository.existsByNombreIgnoreCaseAndIdSectorNot(request.getNombre(), id)) {
+            throw new IllegalArgumentException("Ya existe otro sector con el nombre: " + request.getNombre());
+        }
+
+        sector.setNombre(request.getNombre());
+
+        Sector sectorActualizado = sectorRepository.save(sector);
+        return mapToDTO(sectorActualizado);
+    }
+
+    private SectorResponseDTO mapToDTO(Sector sector) {
         SectorResponseDTO dto = new SectorResponseDTO();
-        dto.setIdSector(sectorGuardado.getIdSector());
-        dto.setNombre(sectorGuardado.getNombre());
-        dto.setDescripcion(sectorGuardado.getDescripcion());
-        
+        dto.setIdSector(sector.getIdSector());
+        dto.setNombre(sector.getNombre());
         return dto;
     }
 }

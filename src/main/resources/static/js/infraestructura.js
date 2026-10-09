@@ -53,9 +53,15 @@ async function cargarSectores() {
                 <tr>
                     <td>${s.idSector}</td>
                     <td>${s.nombre}</td>
-                    <td>${s.descripcion || 'Sin descripción'}</td>
+                    <td class="text-center">
+                        <button class="btn btn-outline-primary btn-sm me-1" onclick="editarSector(${s.idSector}, '${escaparComillas(s.nombre)}')" title="Editar">
+                            ✏️ Editar
+                        </button>
+                        <button class="btn btn-outline-danger btn-sm" onclick="eliminarSector(${s.idSector}, '${escaparComillas(s.nombre)}')" title="Eliminar">
+                            🗑️ Eliminar
+                        </button>
+                    </td>
                 </tr>`;
-            select.innerHTML += `<option value="${s.idSector}">${s.nombre}</option>`;
         });
 
         if (selectGalponSec) selectGalponSec.innerHTML += opcionesHTML; 
@@ -65,6 +71,73 @@ async function cargarSectores() {
     } catch (err) {
         console.error('Error al cargar sectores:', err);
     }
+}
+
+// Función auxiliar para escapar comillas simples en atributos onclick
+function escaparComillas(texto) {
+    return texto ? texto.replace(/'/g, "\\'").replace(/"/g, '&quot;') : '';
+}
+
+// ===================== ELIMINAR SECTOR =====================
+async function eliminarSector(id, nombre) {
+    const confirmar = confirm(`¿Está seguro de que desea eliminar el sector "${nombre}"?\n\nEsta acción no se puede deshacer.`);
+    if (!confirmar) return;
+
+    try {
+        const headers = await getCsrfHeaders();
+        const res = await fetch(`/api/infraestructura/sectores/${id}`, {
+            method: 'DELETE',
+            credentials: 'same-origin',
+            headers: headers
+        });
+
+        if (res.ok) {
+            alert(`Sector "${nombre}" eliminado correctamente.`);
+            cargarSectores();
+            cargarGalpones();
+            cargarVistaInteractivaGalpones();
+        } else {
+            const err = await res.json().catch(() => ({}));
+            alert(err.message || 'Error al eliminar el sector.');
+        }
+    } catch (err) {
+        console.error('Error al eliminar sector:', err);
+        alert('Error de conexión al intentar eliminar el sector.');
+    }
+}
+
+// ===================== EDITAR SECTOR =====================
+function editarSector(id, nombre) {
+    document.querySelector('#sec-id').value = id;
+    document.querySelector('#sec-nombre').value = nombre;
+
+    // Cambiar apariencia del formulario a modo edición
+    const btnGuardar = document.querySelector('#btn-guardar-sector');
+    const btnCancelar = document.querySelector('#btn-cancelar-edicion');
+    if (btnGuardar) {
+        btnGuardar.textContent = 'Actualizar Sector';
+        btnGuardar.classList.remove('btn-success');
+        btnGuardar.classList.add('btn-primary');
+    }
+    if (btnCancelar) btnCancelar.classList.remove('d-none');
+
+    // Hacer scroll al formulario
+    document.querySelector('#form-sector').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    document.querySelector('#sec-nombre').focus();
+}
+
+function cancelarEdicionSector() {
+    document.querySelector('#sec-id').value = '';
+    document.querySelector('#form-sector').reset();
+
+    const btnGuardar = document.querySelector('#btn-guardar-sector');
+    const btnCancelar = document.querySelector('#btn-cancelar-edicion');
+    if (btnGuardar) {
+        btnGuardar.textContent = 'Guardar Sector';
+        btnGuardar.classList.remove('btn-primary');
+        btnGuardar.classList.add('btn-success');
+    }
+    if (btnCancelar) btnCancelar.classList.add('d-none');
 }
 
 // 2. Cargar Galpones (Tabla con ID, Galpón, Estado y Sector)
@@ -163,16 +236,55 @@ if (selectSectorFiltro) {
     });
 }
 
-// Guardar Lote
+// Guardar Lote y Verificar Guía
 const formLote = document.querySelector('#form-lote');
+const btnVerificarGuia = document.querySelector('#btn-verificar-guia');
+
+if (btnVerificarGuia) {
+    btnVerificarGuia.addEventListener('click', async () => {
+        const cod = document.querySelector('#lote-guia-cod').value;
+        const num = document.querySelector('#lote-guia-num').value;
+        if (!cod || !num) {
+            alert('Ingrese la guía completa (código y número)');
+            return;
+        }
+
+        const guia = `${cod}-${num}`;
+        try {
+            const res = await fetch(`/api/infraestructura/lotes/verificar-guia?guia=${guia}`);
+            if (res.ok) {
+                const data = await res.json();
+                document.querySelector('#lote-cant-aves').value = data.cantidadActual;
+                document.querySelector('#lote-dias-nacido').value = data.diasNacido;
+                document.querySelector('#lote-raza').value = data.raza;
+                document.querySelector('#lote-fecha-ingreso').value = data.fechaIngreso;
+                
+                document.querySelector('#btn-guardar-lote').disabled = false;
+            } else {
+                alert('Guía no encontrada o formato inválido. Use XXX-XXXX.');
+                document.querySelector('#btn-guardar-lote').disabled = true;
+            }
+        } catch (err) {
+            console.error('Error al verificar guía:', err);
+            alert('Error al conectar con el servidor.');
+        }
+    });
+}
+
 if (formLote) {
     formLote.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const cant = parseInt(document.querySelector('#lote-cant-inicial').value);
+        
+        const cant = parseInt(document.querySelector('#lote-cant-aves').value);
+        const cod = document.querySelector('#lote-guia-cod').value;
+        const num = document.querySelector('#lote-guia-num').value;
+
         const payload = {
-            nombre: document.querySelector('#lote-nombre').value,
+            nombre: `${cod}-${num}`,
             cantidadInicial: cant,
             cantidadActual: cant,
+            diasNacido: parseInt(document.querySelector('#lote-dias-nacido').value),
+            raza: document.querySelector('#lote-raza').value,
             fechaIngreso: document.querySelector('#lote-fecha-ingreso').value
         };
 
@@ -185,9 +297,12 @@ if (formLote) {
         });
         if (res.ok) {
             e.target.reset();
+            document.querySelector('#btn-guardar-lote').disabled = true;
             cargarLotes();
+            alert('Lote guardado correctamente.');
         } else {
-            alert('Error al guardar el lote');
+            const err = await res.json().catch(() => ({}));
+            alert(err.message || 'Error al guardar el lote. Posiblemente la guía ya esté registrada.');
         }
     });
 }
@@ -232,7 +347,6 @@ async function cargarVistaInteractivaGalpones() {
             contenedor.innerHTML += `
                 <div class="border-bottom pb-3 mb-3">
                     <h6 class="fw-bold text-success fs-5 mb-2">📍 Sector: ${sector.nombre}</h6>
-                    <p class="text-muted small mb-3">${sector.descripcion || 'Sin descripción'}</p>
                     ${galponesCardsHTML}
                 </div>`;
         });
@@ -277,32 +391,53 @@ if (formLoteGalpon) {
     });
 }
 
-// Contrato de inserción para Gestión de Sectores
+// Contrato de inserción/actualización para Gestión de Sectores
 const formSector = document.querySelector('#form-sector');
 if (formSector) {
     formSector.addEventListener('submit', async (e) => {
         e.preventDefault();
         
+        const sectorId = document.querySelector('#sec-id').value;
         const payload = {
-            nombre: document.querySelector('#sec-nombre').value,
-            descripcion: document.querySelector('#sec-descripcion').value
+            nombre: document.querySelector('#sec-nombre').value.trim()
         };
+
+        // Validación básica en frontend
+        if (!payload.nombre) {
+            alert('El nombre del sector es obligatorio.');
+            return;
+        }
 
         try {
             const headers = await getCsrfHeaders();
-            const res = await fetch('/api/infraestructura/sectores', {
-                method: 'POST',
-                credentials: 'same-origin',
-                headers: headers,
-                body: JSON.stringify(payload)
-            });
+            let res;
+
+            if (sectorId) {
+                // Modo EDICIÓN: PUT
+                res = await fetch(`/api/infraestructura/sectores/${sectorId}`, {
+                    method: 'PUT',
+                    credentials: 'same-origin',
+                    headers: headers,
+                    body: JSON.stringify(payload)
+                });
+            } else {
+                // Modo CREACIÓN: POST
+                res = await fetch('/api/infraestructura/sectores', {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: headers,
+                    body: JSON.stringify(payload)
+                });
+            }
 
             if (res.ok) {
+                cancelarEdicionSector();
                 e.target.reset();
                 cargarSectores();
                 cargarVistaInteractivaGalpones();
             } else {
-                console.error("El servidor Spring Boot rechazó la petición. Código HTTP:", res.status);
+                const err = await res.json().catch(() => ({}));
+                alert(err.message || 'Error al guardar el sector.');
             }
         } catch (err) {
             console.error('Fallo crítico en la capa de red al intentar guardar el sector:', err);

@@ -32,21 +32,21 @@
                 <div class="card border-0 shadow-sm rounded-4 p-4 bg-white h-100">
                     <h5 class="fw-bold mb-3 text-secondary">Gestión de Sectores</h5>
                     <form id="form-sector" class="mb-4">
+                        <input type="hidden" id="sec-id" value="">
                         <div class="mb-3">
                             <label for="sec-nombre" class="form-label">Nombre del Sector</label>
                             <input type="text" id="sec-nombre" class="form-control" placeholder="Ej: Sector Norte" required>
                         </div>
-                        <div class="mb-3">
-                            <label for="sec-descripcion" class="form-label">Descripción</label>
-                            <input type="text" id="sec-descripcion" class="form-control" placeholder="Ej: Zona de postura activa">
+                        <div class="d-flex gap-2">
+                            <button type="submit" id="btn-guardar-sector" class="btn btn-success flex-fill fw-semibold">Guardar Sector</button>
+                            <button type="button" id="btn-cancelar-edicion" class="btn btn-outline-secondary flex-fill fw-semibold d-none" onclick="cancelarEdicionSector()">Cancelar</button>
                         </div>
-                        <button type="submit" class="btn btn-success w-100 fw-semibold">Guardar Sector</button>
                     </form>
 
                     <div class="table-responsive">
                         <table class="table table-hover align-middle">
                             <thead class="table-light">
-                                <tr><th>ID</th><th>Nombre</th><th>Descripción</th></tr>
+                                <tr><th>ID</th><th>Nombre</th><th class="text-center">Acciones</th></tr>
                             </thead>
                             <tbody id="tb-sectores"></tbody>
                         </table>
@@ -158,20 +158,33 @@
                     <h5 class="fw-bold mb-3 text-secondary">Lotes de Aves</h5>
                     <form id="form-lote" class="mb-4">
                         <div class="mb-3">
-                            <label for="lote-nombre" class="form-label">Nombre del Lote</label>
-                            <input type="text" id="lote-nombre" class="form-control" placeholder="Ej: Lote Cobb-2026" required>
+                            <label class="form-label">Guía del Lote</label>
+                            <div class="input-group">
+                                <input type="text" id="lote-guia-cod" class="form-control" placeholder="000" maxlength="3" required style="max-width: 80px;">
+                                <span class="input-group-text">-</span>
+                                <input type="text" id="lote-guia-num" class="form-control" placeholder="0000" maxlength="4" required>
+                                <button type="button" id="btn-verificar-guia" class="btn btn-primary fw-semibold">Verificar</button>
+                            </div>
                         </div>
                         <div class="row g-2 mb-3">
-                            <div class="col-md-6">
-                                <label for="lote-cant-inicial" class="form-label">Cantidad Inicial</label>
-                                <input type="number" id="lote-cant-inicial" class="form-control" min="1" required>
+                            <div class="col-md-4">
+                                <label for="lote-cant-aves" class="form-label">Cant. Aves</label>
+                                <input type="number" id="lote-cant-aves" class="form-control bg-light" readonly required>
                             </div>
-                            <div class="col-md-6">
-                                <label for="lote-fecha-ingreso" class="form-label">Fecha Ingreso</label>
-                                <input type="date" id="lote-fecha-ingreso" class="form-control" required>
+                            <div class="col-md-4">
+                                <label for="lote-dias-nacido" class="form-label">Días Nacido</label>
+                                <input type="number" id="lote-dias-nacido" class="form-control bg-light" readonly required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="lote-raza" class="form-label">Raza Ave</label>
+                                <input type="text" id="lote-raza" class="form-control bg-light" readonly required>
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-success w-100 fw-semibold">Guardar Lote</button>
+                        <div class="mb-3">
+                            <label for="lote-fecha-ingreso" class="form-label">Fecha Ingreso</label>
+                            <input type="date" id="lote-fecha-ingreso" class="form-control bg-light" readonly required>
+                        </div>
+                        <button type="submit" id="btn-guardar-lote" class="btn btn-success w-100 fw-semibold" disabled>Guardar Lote</button>
                     </form>
 
                     <div class="table-responsive">

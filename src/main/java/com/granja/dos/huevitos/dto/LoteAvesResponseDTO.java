@@ -12,4 +12,6 @@ public class LoteAvesResponseDTO {
     private Integer cantidadInicial;
     private Integer cantidadActual;
     private LocalDate fechaIngreso;
+    private String raza;
+    private Integer diasNacido;
 }

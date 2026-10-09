@@ -30,6 +30,8 @@ public class LoteAvesServiceImpl implements LoteAvesService {
             dto.setNombre(lote.getNombre());
             dto.setCantidadInicial(lote.getCantidadInicial());
             dto.setCantidadActual(lote.getCantidadActual());
+            dto.setRaza(lote.getRaza());
+            dto.setDiasNacido(lote.getDiasNacido());
             
             // Transformación estructural de LocalDateTime a LocalDate
             if (lote.getFechaIngreso() != null) {
@@ -46,6 +48,8 @@ public class LoteAvesServiceImpl implements LoteAvesService {
         nuevoLote.setNombre(request.getNombre());
         nuevoLote.setCantidadInicial(request.getCantidadInicial());
         nuevoLote.setCantidadActual(request.getCantidadActual()); 
+        nuevoLote.setRaza(request.getRaza());
+        nuevoLote.setDiasNacido(request.getDiasNacido());
         
         // Conversión estricta inyectando la hora base para PostgreSQL
         if (request.getFechaIngreso() != null) {
@@ -61,6 +65,8 @@ public class LoteAvesServiceImpl implements LoteAvesService {
         dto.setNombre(loteGuardado.getNombre());
         dto.setCantidadInicial(loteGuardado.getCantidadInicial());
         dto.setCantidadActual(loteGuardado.getCantidadActual());
+        dto.setRaza(loteGuardado.getRaza());
+        dto.setDiasNacido(loteGuardado.getDiasNacido());
         
         dto.setFechaIngreso(loteGuardado.getFechaIngreso() != null ? loteGuardado.getFechaIngreso().toLocalDate() : null);
         

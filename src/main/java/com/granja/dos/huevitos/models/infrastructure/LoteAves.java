@@ -39,4 +39,10 @@ public class LoteAves {
     // El puente: Mapeamos la variable 'fechaIngreso' con la columna física 'creat'
     @Column(name = "creat", nullable = false, updatable = false)
     private LocalDateTime fechaIngreso = LocalDateTime.now();
+
+    @Column(name = "raza", length = 50)
+    private String raza;
+
+    @Column(name = "dias_nacido")
+    private Integer diasNacido;
 }

@@ -16,12 +16,25 @@ public class LoteGalponController {
 
     @PostMapping
     public ResponseEntity<?> asignarLoteAGalpon(@RequestBody LoteGalponRequestDTO dto) {
-        LoteGalpon asignacion = loteGalponService.asignarLoteAGalpon(dto);
-        return ResponseEntity.ok(asignacion);
+        try {
+            LoteGalpon asignacion = loteGalponService.asignarLoteAGalpon(dto);
+            return ResponseEntity.ok(java.util.Map.of(
+                "message", "Asignación exitosa",
+                "id", asignacion.getIdLoteGalpon()
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(java.util.Map.of("message", e.getMessage()));
+        }
     }
     
     @GetMapping
-    public ResponseEntity<java.util.List<LoteGalpon>> listarTodos() {
-        return ResponseEntity.ok(loteGalponService.listarTodos());
+    public ResponseEntity<?> listarTodos() {
+        return ResponseEntity.ok(loteGalponService.listarTodos().stream().map(lg -> java.util.Map.of(
+            "idLoteGalpon", lg.getIdLoteGalpon(),
+            "loteId", lg.getLote().getIdLote(),
+            "galponId", lg.getGalpon().getIdGalpon(),
+            "cantidadAves", lg.getCantidadAves(),
+            "fechaIngreso", lg.getFechaIngreso()
+        )).toList());
     }
 }

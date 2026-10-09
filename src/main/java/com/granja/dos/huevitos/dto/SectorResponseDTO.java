@@ -7,5 +7,4 @@ import lombok.Setter;
 public class SectorResponseDTO {
     private int idSector;
     private String nombre;
-    private String descripcion;
 }
