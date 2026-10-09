@@ -17,8 +17,14 @@ public class ProduccionDiariaController {
     private final ProduccionDiariaService produccionDiariaService;
 
     @PostMapping
-    public ResponseEntity<ProduccionDiariaResponseDTO> registrarProduccion(@RequestBody ProduccionDiariaRequestDTO requestDTO) {
-        return ResponseEntity.ok(produccionDiariaService.registrarProduccion(requestDTO));
+    public ResponseEntity<?> registrarProduccion(@RequestBody ProduccionDiariaRequestDTO requestDTO) {
+        try {
+            return ResponseEntity.ok(produccionDiariaService.registrarProduccion(requestDTO));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(java.util.Map.of("message", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(java.util.Map.of("message", "Error interno: " + e.getMessage()));
+        }
     }
 
     @GetMapping

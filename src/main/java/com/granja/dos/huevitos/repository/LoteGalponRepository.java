@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface LoteGalponRepository extends JpaRepository<LoteGalpon, Integer> {
     List<LoteGalpon> findByGalpon_IdGalpon(Integer idGalpon);
+    boolean existsByLote_IdLote(Integer idLote);
 }

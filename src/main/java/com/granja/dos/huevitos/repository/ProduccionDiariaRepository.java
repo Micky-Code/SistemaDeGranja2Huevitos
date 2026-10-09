@@ -10,4 +10,5 @@ import java.util.List;
 @Repository
 public interface ProduccionDiariaRepository extends JpaRepository<ProduccionDiaria, Long> {
     List<ProduccionDiaria> findByLoteGalponIn(List<LoteGalpon> loteGalpones);
+    boolean existsByLoteGalpon_IdLoteGalponAndFecha(Integer idLoteGalpon, java.time.LocalDate fecha);
 }

@@ -208,5 +208,75 @@
         "diasNacido":  10,
         "raza":  "Hy-Line Brown",
         "fechaIngreso":  "2026-10-07"
+    },
+    {
+        "nombre":  "001-1031",
+        "cantidadActual":  5534,
+        "diasNacido":  15,
+        "raza":  "Babcock Brown",
+        "fechaIngreso":  "2026-10-06"
+    },
+    {
+        "nombre":  "001-1032",
+        "cantidadActual":  5338,
+        "diasNacido":  2,
+        "raza":  "Isa Brown",
+        "fechaIngreso":  "2026-10-04"
+    },
+    {
+        "nombre":  "001-1033",
+        "cantidadActual":  2960,
+        "diasNacido":  8,
+        "raza":  "Isa Brown",
+        "fechaIngreso":  "2026-10-07"
+    },
+    {
+        "nombre":  "001-1034",
+        "cantidadActual":  6195,
+        "diasNacido":  12,
+        "raza":  "Isa Brown",
+        "fechaIngreso":  "2026-10-05"
+    },
+    {
+        "nombre":  "001-1035",
+        "cantidadActual":  5625,
+        "diasNacido":  3,
+        "raza":  "Isa Brown",
+        "fechaIngreso":  "2026-10-08"
+    },
+    {
+        "nombre":  "001-1036",
+        "cantidadActual":  7060,
+        "diasNacido":  18,
+        "raza":  "Hy-Line Brown",
+        "fechaIngreso":  "2026-10-03"
+    },
+    {
+        "nombre":  "001-1037",
+        "cantidadActual":  4813,
+        "diasNacido":  12,
+        "raza":  "Babcock Brown",
+        "fechaIngreso":  "2026-10-06"
+    },
+    {
+        "nombre":  "001-1038",
+        "cantidadActual":  2754,
+        "diasNacido":  3,
+        "raza":  "Babcock Brown",
+        "fechaIngreso":  "2026-10-01"
+    },
+    {
+        "nombre":  "001-1039",
+        "cantidadActual":  6897,
+        "diasNacido":  15,
+        "raza":  "Lohmann Brown",
+        "fechaIngreso":  "2026-10-02"
+    },
+    {
+        "nombre":  "001-1040",
+        "cantidadActual":  3746,
+        "diasNacido":  17,
+        "raza":  "Isa Brown",
+        "fechaIngreso":  "2026-10-02"
     }
 ]

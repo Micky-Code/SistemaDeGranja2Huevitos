@@ -185,10 +185,10 @@ async function cargarLotes() {
                 tbody.innerHTML += `
                     <tr>
                         <td>${l.idLote}</td>
-                        <td>${l.nombre}</td>
-                        <td>${l.cantidadInicial}</td>
+                        <td><span class="badge bg-primary">${l.nombre}</span></td>
                         <td>${l.cantidadActual}</td>
-                        <td>${l.fechaIngreso || ''}</td>
+                        <td>${l.diasNacido || '-'}</td>
+                        <td>${l.raza || '-'}</td>
                     </tr>`;
             }
             if (selectLoteLG) {

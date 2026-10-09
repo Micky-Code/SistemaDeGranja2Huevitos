@@ -27,6 +27,10 @@ public class ProduccionDiariaServiceImpl implements ProduccionDiariaService {
         LoteGalpon loteGalpon = loteGalponRepository.findById(requestDTO.getLoteGalponId())
                 .orElseThrow(() -> new RuntimeException("LoteGalpon no encontrado"));
 
+        if (produccionDiariaRepository.existsByLoteGalpon_IdLoteGalponAndFecha(requestDTO.getLoteGalponId(), requestDTO.getFecha())) {
+            throw new IllegalArgumentException("Error: Ya se ha registrado la producción diaria para este galpón en la fecha seleccionada.");
+        }
+
         ProduccionDiaria produccionDiaria = ProduccionDiaria.builder()
                 .fecha(requestDTO.getFecha())
                 .cantidadHuevosBuenos(requestDTO.getCantidadHuevosBuenos())

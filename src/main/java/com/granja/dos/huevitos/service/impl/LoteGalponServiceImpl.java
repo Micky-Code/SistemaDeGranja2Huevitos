@@ -34,6 +34,10 @@ public class LoteGalponServiceImpl implements LoteGalponService {
         LoteAves lote = loteAvesRepository.findById(dto.getLoteId())
             .orElseThrow(() -> new RuntimeException("Lote no encontrado"));
 
+        if (loteGalponRepository.existsByLote_IdLote(dto.getLoteId())) {
+            throw new IllegalArgumentException("Error: Este lote ya ha sido asignado a un galpón. Un lote solo puede asignarse una vez.");
+        }
+
         if (dto.getCantidadAves() > galpon.getCapacidad()) {
             throw new IllegalArgumentException("La cantidad de aves excede la capacidad máxima del galpón.");
         }
